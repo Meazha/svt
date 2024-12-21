@@ -2,56 +2,58 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     font-family: Arial, sans-serif;
-    line-height: 1.6;
+    line-height: 1.4;
     background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-    font-size: 16px;
+    font-size: 14px; /* Smaller base font size for mobile */
+    padding-bottom: 60px; /* Space for bottom navigation */
 }
 
 header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 10px;
 }
 
 header h1 {
-    margin: 0;
-    font-size: 24px;
-    letter-spacing: 1px;
+    font-size: 18px;
+    text-align: center;
+    color: white;
 }
 
 .container {
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
     padding: 10px;
+    margin: 0;
 }
 
 nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #333;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-around;
-    margin-bottom: 15px;
+    padding: 8px 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
 }
 
 nav button {
     flex: 1;
-    min-width: 100px;
-    padding: 10px;
-    margin: 5px;
-    background-color: #333;
+    padding: 8px 4px;
+    font-size: 12px;
+    background: transparent;
     color: white;
     border: none;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    border-radius: 5px;
+    text-align: center;
 }
 
 nav button:hover {
@@ -60,16 +62,12 @@ nav button:hover {
 
 /* Enhanced Button Styles */
 .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.1s;
-    gap: 5px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    margin: 5px 0;
+    touch-action: manipulation;
 }
 
 .btn .icon {
@@ -94,11 +92,10 @@ nav button:hover {
     background-color: #333;
 }
 
-.btn:active {
-    transform: scale(0.95);
+.btn:active,
+nav button:active {
+    opacity: 0.7;
 }
-
-/* Add these styles to styles.css */
 
 .cancelled-bill {
     background-color: #fff5f5;
@@ -109,11 +106,10 @@ nav button:hover {
 }
 
 .status-badge {
+    display: inline-block;
     padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
+    border-radius: 12px;
+    font-size: 11px;
 }
 
 .status-badge.active {
@@ -147,17 +143,17 @@ nav button:hover {
 }
 
 .section {
-    background-color: white;
+    background: white;
+    border-radius: 12px;
     padding: 15px;
     margin-bottom: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .form-group {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 15px;
 }
 
@@ -173,11 +169,20 @@ nav button:hover {
     min-width: 100px;
 }
 
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px; /* Larger touch targets */
+    margin: 0;
+}
+
 .report-filters {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 .report-filters button {
@@ -193,8 +198,8 @@ nav button:hover {
 
 table {
     width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
+    font-size: 13px;
+    white-space: nowrap;
 }
 
 table, th, td {
@@ -202,30 +207,29 @@ table, th, td {
 }
 
 th, td {
-    padding: 10px;
+    padding: 8px;
     text-align: left;
-    font-size: 14px;
 }
 
 .bill-summary {
-    margin-top: 20px;
-    text-align: right;
+    position: sticky;
+    bottom: 60px; /* Above bottom navigation */
+    background: white;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
 }
 
 .today-summary {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
+    padding: 12px;
+    margin: -10px -10px 15px -10px;
+    border-radius: 0;
+    background: #fff;
 }
 
 .today-summary h3 {
-    margin-top: 0;
-    color: #333;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    font-size: 18px;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 
 .today-summary p {
@@ -233,6 +237,12 @@ th, td {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
+}
+
+.table-responsive {
+    margin: 0 -10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Mobile Specific Adjustments */
@@ -340,15 +350,20 @@ button:active {
 }
 
 .input-group {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
     align-items: center;
-    flex: 1;
 }
 
 .input-group select,
 .input-group input {
     flex: 1;
+}
+
+.btn.loading {
+    opacity: 0.7;
+    pointer-events: none;
 }
 
 .btn-secondary {
@@ -365,6 +380,18 @@ button:active {
     background-color: #5a6268;
 }
 
+thead th {
+    position: sticky;
+    top: 46px; /* Below main header */
+    background: white;
+    z-index: 10;
+}
+
+button, 
+input[type="submit"] {
+    min-height: 44px;
+}
+
 @media screen and (max-width: 768px) {
     .input-group {
         flex-direction: column;
@@ -378,11 +405,9 @@ button:active {
 }
 
 .customer-info-section {
-    background-color: #f8f8f8;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    margin: -10px -10px 15px -10px;
+    border-radius: 0;
+    background: #fff;
 }
 
 .customer-info-section textarea {
