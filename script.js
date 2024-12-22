@@ -78,30 +78,45 @@ function toggleProductInput() {
 
 // Brand Management
 function addBrand() {
-    const brandName = document.getElementById('brand-name').value;
-    const brandDescription = document.getElementById('brand-description').value;
+    try {
+        // Get the input values
+        const brandName = document.getElementById('brand-name').value.trim();
+        const brandDescription = document.getElementById('brand-description').value.trim();
 
-    if (!brandName) {
-        alert('Please enter a brand name');
-        return;
+        // Validate inputs
+        if (!brandName) {
+            alert('Please enter a brand name.');
+            return;
+        }
+
+        // Fetch the existing brands from localStorage or initialize an empty array
+        const brands = JSON.parse(localStorage.getItem('brands')) || [];
+
+        // Create a new brand object
+        const newBrand = {
+            id: Date.now(), // Unique ID based on timestamp
+            name: brandName,
+            description: brandDescription || ''
+        };
+
+        // Add the new brand to the list
+        brands.push(newBrand);
+
+        // Save the updated brands list to localStorage
+        localStorage.setItem('brands', JSON.stringify(brands));
+
+        // Clear the input fields
+        document.getElementById('brand-name').value = '';
+        document.getElementById('brand-description').value = '';
+
+        // Refresh the brand list
+        loadBrandsList();
+
+        alert('Brand added successfully!');
+    } catch (error) {
+        console.error('Error adding brand:', error);
+        alert('Failed to add the brand. Please try again.');
     }
-
-    const brands = JSON.parse(localStorage.getItem('brands'));
-    const newBrand = {
-        id: Date.now(),
-        name: brandName,
-        description: brandDescription
-    };
-
-    brands.push(newBrand);
-    localStorage.setItem('brands', JSON.stringify(brands));
-
-    // Clear inputs
-    document.getElementById('brand-name').value = '';
-    document.getElementById('brand-description').value = '';
-
-    loadBrandsList();
-    loadProductsList();
 }
 
 // Product Management
@@ -138,21 +153,26 @@ function addProduct() {
 }
 
 function loadBrandsList() {
-    const brands = JSON.parse(localStorage.getItem('brands'));
-    const brandSelects = [
-        document.getElementById('product-brand'),
-        document.getElementById('billing-brand')
-    ];
+    try {
+        const brands = JSON.parse(localStorage.getItem('brands')) || [];
+        const brandSelects = [
+            document.getElementById('product-brand'),
+            document.getElementById('billing-brand')
+        ];
 
-    brandSelects.forEach(select => {
-        select.innerHTML = '<option value="">Select Brand</option>';
-        brands.forEach(brand => {
-            const option = document.createElement('option');
-            option.value = brand.id;
-            option.textContent = brand.name;
-            select.appendChild(option);
+        // Clear existing options
+        brandSelects.forEach(select => {
+            select.innerHTML = '<option value="">Select Brand</option>';
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = brand.name;
+                select.appendChild(option);
+            });
         });
-    });
+    } catch (error) {
+        console.error('Error loading brands:', error);
+    }
 }
 
 function loadProductsList(filterBrandId = '') {
