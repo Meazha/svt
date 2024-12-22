@@ -1,5 +1,5 @@
 // Admin password - in a real application, this should be handled securely on a server
-const ADMIN_PASSWORD = "admin123"; // Change this to your desired password
+const ADMIN_PASSWORD = "123"; // Change this to your desired password
 
 // Check if already logged in
 window.onload = function() {
