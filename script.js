@@ -10,6 +10,40 @@ function initStorage() {
 // Call initStorage when the page loads
 window.onload = initStorage;
 
+const appVersion = "1.0.1";
+
+if (localStorage.getItem("appVersion") !== appVersion) {
+    localStorage.clear(); // Clear outdated data
+    localStorage.setItem("appVersion", appVersion);
+}
+
+self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open('app-cache-v1').then(cache => {
+            return cache.addAll([
+                '/index.html',
+                '/styles.css',
+                '/script.js'
+            ]);
+        })
+    );
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== 'app-cache-v1') {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+
+
 function isLocalStorageAvailable() {
     try {
         const testKey = "__test__";
