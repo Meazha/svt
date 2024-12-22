@@ -206,6 +206,33 @@ th, td {
     font-size: 14px;
 }
 
+.staff-details, .customer-details {
+    background-color: #f9f9f9; /* Light gray background for better readability */
+    border: 1px solid #ddd; /* Subtle border to separate sections */
+    border-radius: 5px; /* Rounded corners for a modern look */
+    padding: 15px; /* Spacing inside the box */
+    margin-bottom: 15px; /* Space between sections */
+}
+
+.staff-details h4, .customer-details h4 {
+    margin-bottom: 10px; /* Space below the heading */
+    font-size: 16px; /* Heading size */
+    font-weight: bold; /* Emphasize headings */
+    color: #333; /* Darker text color for headings */
+    border-bottom: 1px solid #ddd; /* Underline effect for headings */
+    padding-bottom: 5px; /* Padding below the heading text */
+}
+
+.staff-details p, .customer-details p {
+    margin: 5px 0; /* Space between lines */
+    font-size: 14px; /* Text size for details */
+    color: #555; /* Slightly muted text color */
+}
+
+.staff-details p strong, .customer-details p strong {
+    color: #333; /* Darker color for emphasized text */
+}
+
 .bill-summary {
     margin-top: 20px;
     text-align: right;
