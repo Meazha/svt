@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Sri Vinayaga Traders</title>
-    <link rel="stylesheet" href="styles.css?v=1.0.1">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
     <style>
         .login-container {
@@ -124,10 +124,9 @@
         <nav>
             <button onclick="showSection('data-management')">Data Management</button>
             <button onclick="showSection('bill-records')">Bill Records</button>
-            <button onclick="showSection('staff-management')">Staff Management</button>
             <button onclick="logout()">Logout</button>
         </nav>
-        
+
         <div id="data-management-section" class="section" style="display: none;">
             <!-- Data Management Content -->
             <div class="backup-restore-section">
@@ -162,40 +161,10 @@
             <div id="bills-container">
                 <!-- Bills will be dynamically added here -->
             </div>
-        </div>   
-        
-        <div id="staff-management-section" class="section" style="display: none;">
-            <h2>Staff Management</h2>
-        
-            <!-- Add Staff Form -->
-            <div class="form-group">
-                <input type="text" id="staff-name" placeholder="Staff Name" required>
-                <input type="email" id="staff-email" placeholder="Staff Phone/Email" required>
-                <input type="text" id="staff-role" placeholder="Role (e.g., Admin, Clerk)" required>
-                <button class="btn btn-primary" onclick="addStaff()">Add Staff</button>
-            </div>
-        
-            <!-- Staff List -->
-            <div class="table-responsive">
-                <table id="staff-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Phone / Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="staff-table-body">
-                        <!-- Staff data will be dynamically added here -->
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 
-    <script src="script.js?v=1.0.1"></script>
+    <script src="admin.js"></script>
     <script>
         // Add this to your main page's script
         function saveDbState() {
@@ -210,6 +179,6 @@
         document.querySelector('button[onclick*="admin.html"]').addEventListener('click', (e) => {
             saveDbState();
         });
-    </script>    
+    </script>
 </body>
 </html>
