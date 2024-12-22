@@ -33,6 +33,10 @@ function showSection(sectionName) {
     if (sectionName === 'reports') loadReportData();
 }
 
+window.onload = function () {
+    showSection('billing');
+};
+
 let isManualBrand = false;
 let isManualProduct = false;
 
@@ -126,7 +130,7 @@ function addProduct() {
     document.getElementById('product-name').value = '';
     document.getElementById('product-price').value = '';
 
-    loadProductsList();
+    filterProductsByBrand();
 }
 
 function loadBrandsList() {
@@ -421,8 +425,16 @@ function removeFromBill(index) {
 }
 
 function generateBill() {
+    const selectedStaffId = document.getElementById('billing-staff').value;
+    const selectedStaff = staffList.find(staff => staff.id == selectedStaffId);
+
+    if (!selectedStaffId) {
+        alert('Please select a staff member to proceed.');
+        return;
+    }
+
     if (currentBillItems.length === 0) {
-        alert('Please add items to the bill');
+        alert('Please add items to the bill.');
         return;
     }
 
@@ -441,7 +453,8 @@ function generateBill() {
         id: Date.now(),
         billNumber: billNumber,
         date: new Date().toISOString(),
-        customer: customerInfo, // Add customer information
+        staff: selectedStaff.name, // Include staff name
+        customer: customerInfo,
         items: currentBillItems.map(item => ({
             ...item,
             itemTotal: item.quantity * item.price
@@ -462,8 +475,10 @@ function generateBill() {
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-mobile').value = '';
     document.getElementById('customer-address').value = '';
+    document.getElementById('billing-staff').value = '';
     updateBillItemsTable();
-    alert(`Bill #${billNumber} Generated Successfully!`);
+
+    alert(`Bill #${billNumber} generated successfully!`);
 }
 
 function cancelBill(billId) {
