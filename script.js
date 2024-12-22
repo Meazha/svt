@@ -441,16 +441,8 @@ function removeFromBill(index) {
 }
 
 function generateBill() {
-    const selectedStaffId = document.getElementById('billing-staff').value;
-    const selectedStaff = staffList.find(staff => staff.id == selectedStaffId);
-
-    if (!selectedStaffId) {
-        alert('Please select a staff member to proceed.');
-        return;
-    }
-
     if (currentBillItems.length === 0) {
-        alert('Please add items to the bill.');
+        alert('Please add items to the bill');
         return;
     }
 
@@ -469,8 +461,7 @@ function generateBill() {
         id: Date.now(),
         billNumber: billNumber,
         date: new Date().toISOString(),
-        staff: selectedStaff.name, // Include staff name
-        customer: customerInfo,
+        customer: customerInfo, // Add customer information
         items: currentBillItems.map(item => ({
             ...item,
             itemTotal: item.quantity * item.price
@@ -491,10 +482,8 @@ function generateBill() {
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-mobile').value = '';
     document.getElementById('customer-address').value = '';
-    document.getElementById('billing-staff').value = '';
     updateBillItemsTable();
-
-    alert(`Bill #${billNumber} generated successfully!`);
+    alert(`Bill #${billNumber} Generated Successfully!`);
 }
 
 function cancelBill(billId) {
