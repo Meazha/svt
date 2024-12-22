@@ -7,8 +7,157 @@ window.onload = function() {
     if (isLoggedIn === 'true') {
         showAdminPanel();
         loadBills();
+        initStaffStorage();
     }
 };
+
+// Function to show sections including staff management
+function showSection(section) {
+    const dataManagement = document.getElementById('data-management-section');
+    const billRecords = document.getElementById('bill-records-section');
+    const staffManagement = document.getElementById('staff-management-section');
+
+    dataManagement.style.display = section === 'data-management' ? 'block' : 'none';
+    billRecords.style.display = section === 'bill-records' ? 'block' : 'none';
+    staffManagement.style.display = section === 'staff-management' ? 'block' : 'none';
+
+    if (section === 'staff-management') {
+        loadStaffList();
+    }
+}
+
+// Initialize staff storage
+function initStaffStorage() {
+    if (!localStorage.getItem('staff')) {
+        localStorage.setItem('staff', JSON.stringify([]));
+    }
+}
+
+// Add new staff
+function addStaff() {
+    const name = document.getElementById('staff-name').value.trim();
+    const mobile = document.getElementById('staff-mobile').value.trim();
+    const role = document.getElementById('staff-role').value.trim();
+
+    if (!name || !mobile || !role) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+        alert('Please enter a valid 10-digit mobile number');
+        return;
+    }
+    const staff = JSON.parse(localStorage.getItem('staff')) || [];
+    
+    const newStaff = {
+        id: Date.now(),
+        name,
+        mobile,
+        role
+    };
+
+    staff.push(newStaff);
+    localStorage.setItem('staff', JSON.stringify(staff));
+
+    // Clear form
+    document.getElementById('staff-name').value = '';
+    document.getElementById('staff-mobile').value = '';
+    document.getElementById('staff-role').value = '';
+
+    loadStaffList();
+    alert('Staff added successfully!');
+}
+
+// Load staff list
+function loadStaffList() {
+    const staff = JSON.parse(localStorage.getItem('staff')) || [];
+    const tableBody = document.getElementById('staff-table-body');
+    tableBody.innerHTML = '';
+
+    staff.forEach(member => {
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+            <td>${member.name}</td>
+            <td>${member.mobile}</td>
+            <td>${member.role}</td>
+            <td>
+                <button class="btn btn-primary" onclick="editStaff(${member.id})">
+                    <i class="icon">✎</i> Edit
+                </button>
+                <button class="btn btn-danger" onclick="deleteStaff(${member.id})">
+                    <i class="icon">×</i> Delete
+                </button>
+            </td>
+        `;
+    });
+}
+
+// Edit staff
+function editStaff(staffId) {
+    const staff = JSON.parse(localStorage.getItem('staff')) || [];
+    const member = staff.find(s => s.id === staffId);
+    
+    if (!member) return;
+
+    document.getElementById('staff-name').value = member.name;
+    document.getElementById('staff-mobile').value = member.mobile;
+    document.getElementById('staff-role').value = member.role;
+
+    const addButton = document.querySelector('button[onclick="addStaff()"]');
+    addButton.innerHTML = '<i class="icon">✓</i> Update Staff';
+    addButton.onclick = () => updateStaff(staffId);
+}
+
+// Update staff
+function updateStaff(staffId) {
+    const name = document.getElementById('staff-name').value.trim();
+    const mobile = document.getElementById('staff-mobile').value.trim();
+    const role = document.getElementById('staff-role').value.trim();
+
+    if (!name || !mobile || !role) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    const staff = JSON.parse(localStorage.getItem('staff')) || [];
+    const staffIndex = staff.findIndex(s => s.id === staffId);
+    
+    if (staffIndex === -1) return;
+
+    staff[staffIndex] = {
+        ...staff[staffIndex],
+        name,
+        mobile,
+        role
+    };
+
+    localStorage.setItem('staff', JSON.stringify(staff));
+
+    // Reset form and button
+    document.getElementById('staff-name').value = '';
+    document.getElementById('staff-mobile').value = '';
+    document.getElementById('staff-role').value = '';
+
+    const updateButton = document.querySelector('button[onclick*="updateStaff"]');
+    updateButton.innerHTML = '<i class="icon">+</i> Add Staff';
+    updateButton.onclick = addStaff;
+
+    loadStaffList();
+    alert('Staff updated successfully!');
+}
+
+// Delete staff
+function deleteStaff(staffId) {
+    if (!confirm('Are you sure you want to delete this staff member?')) {
+        return;
+    }
+
+    const staff = JSON.parse(localStorage.getItem('staff')) || [];
+    const filteredStaff = staff.filter(s => s.id !== staffId);
+    localStorage.setItem('staff', JSON.stringify(filteredStaff));
+    loadStaffList();
+}
 
 function resetBillNumber() {
     if (confirm('Are you sure you want to reset the bill number to 1? This action cannot be undone!')) {
@@ -17,18 +166,6 @@ function resetBillNumber() {
     }
 }
 
-function showSection(section) {
-    const dataManagement = document.getElementById('data-management-section');
-    const billRecords = document.getElementById('bill-records-section');
-
-    if (section === 'data-management') {
-        dataManagement.style.display = 'block';
-        billRecords.style.display = 'none';
-    } else if (section === 'bill-records') {
-        dataManagement.style.display = 'none';
-        billRecords.style.display = 'block';
-    }
-}
 
 // Show Bill Records by default on page load
 window.onload = function () {
@@ -169,6 +306,8 @@ function createBillElement(bill) {
                 <br>
                 <strong>Address:</strong> ${bill.customer?.address || 'N/A'}
                 <br>
+                <strong>Staff:</strong> ${bill.staff?.name || 'N/A'} (${bill.staff?.role || 'N/A'})
+                <br>
                 <span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span>
                 ${bill.status === 'CANCELLED' ? 
                     `<br><span class="cancelled-date">Cancelled on ${new Date(bill.cancellationDate).toLocaleDateString()}</span>` : 
@@ -212,6 +351,8 @@ function createBillElement(bill) {
 
     return billDiv;
 }
+
+
 function cancelBill(billId) {
     if (!confirm('Are you sure you want to cancel this bill?')) {
         return;
@@ -286,26 +427,26 @@ function applyFilters() {
 function backupData() {
     try {
         const backup = {
-            brands: safeGetStorageData('brands', []),
-            products: safeGetStorageData('products', []),
-            bills: safeGetStorageData('bills', []),
+            brands: JSON.parse(localStorage.getItem('brands')) || [],
+            products: JSON.parse(localStorage.getItem('products')) || [],
+            bills: JSON.parse(localStorage.getItem('bills')) || [],
+            staff: JSON.parse(localStorage.getItem('staff')) || [],
             currentBillNumber: parseInt(localStorage.getItem('currentBillNumber')) || 1,
             timestamp: new Date().toISOString(),
             version: '1.0'
         };
 
-        // Validate backup data before creating file
-        if (!validateStorageData(backup)) {
-            throw new Error('Invalid data structure detected');
-        }
-
+        // Create a JSON string of the backup data
         const backupString = JSON.stringify(backup, null, 2);
+
+        // Create a downloadable JSON file
         const blob = new Blob([backupString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `sri-vinayaga-backup-${new Date().toISOString().split('T')[0]}.json`;
-        
+        a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
+
+        // Trigger the download
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -313,8 +454,8 @@ function backupData() {
 
         alert('Backup created successfully!');
     } catch (error) {
-        console.error('Backup creation failed:', error);
-        alert('Failed to create backup: ' + error.message);
+        console.error('Error creating backup:', error);
+        alert('Failed to create backup. Please try again.');
     }
 }
 
@@ -322,73 +463,40 @@ function backupData() {
 function restoreData(event) {
     const file = event.target.files[0];
     if (!file) {
-        alert('No file selected');
+        alert('No file selected.');
         return;
     }
 
     if (file.type !== 'application/json') {
-        alert('Please select a valid JSON backup file');
+        alert('Please select a valid JSON file.');
         return;
     }
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         try {
             const backup = JSON.parse(e.target.result);
-            
-            // Validate backup structure
-            if (!validateStorageData(backup)) {
-                throw new Error('Invalid backup file structure');
+
+            // Validate the backup structure
+            if (!backup.version || !backup.timestamp || !backup.brands || !backup.products || !backup.bills || !backup.staff) {
+                throw new Error('Invalid backup file format.');
             }
 
-            if (!backup.version || !backup.timestamp) {
-                throw new Error('Invalid backup file: Missing version or timestamp');
-            }
-
-            // Confirm restore
+            // Confirm restoration
             if (confirm('This will replace all current data. Are you sure you want to proceed?')) {
-                // Create backup of current data first
-                const currentData = {
-                    brands: safeGetStorageData('brands', []),
-                    products: safeGetStorageData('products', []),
-                    bills: safeGetStorageData('bills', []),
-                    currentBillNumber: parseInt(localStorage.getItem('currentBillNumber')) || 1,
-                    timestamp: new Date().toISOString(),
-                    version: '1.0'
-                };
+                localStorage.setItem('brands', JSON.stringify(backup.brands));
+                localStorage.setItem('products', JSON.stringify(backup.products));
+                localStorage.setItem('bills', JSON.stringify(backup.bills));
+                localStorage.setItem('staff', JSON.stringify(backup.staff));
+                localStorage.setItem('currentBillNumber', backup.currentBillNumber.toString());
 
-                // Store current data as recovery point
-                sessionStorage.setItem('recoveryBackup', JSON.stringify(currentData));
-
-                try {
-                    // Restore data
-                    safeSetStorageData('brands', backup.brands);
-                    safeSetStorageData('products', backup.products);
-                    safeSetStorageData('bills', backup.bills);
-                    localStorage.setItem('currentBillNumber', backup.currentBillNumber.toString());
-
-                    alert('Data restored successfully! The page will now reload.');
-                    window.location.reload();
-                } catch (restoreError) {
-                    // If restore fails, attempt to recover
-                    const recovery = JSON.parse(sessionStorage.getItem('recoveryBackup'));
-                    safeSetStorageData('brands', recovery.brands);
-                    safeSetStorageData('products', recovery.products);
-                    safeSetStorageData('bills', recovery.bills);
-                    localStorage.setItem('currentBillNumber', recovery.currentBillNumber.toString());
-
-                    throw new Error('Restore failed, previous data recovered: ' + restoreError.message);
-                }
+                alert('Data restored successfully! The page will now reload.');
+                window.location.reload();
             }
         } catch (error) {
-            console.error('Restore failed:', error);
-            alert('Error restoring backup: ' + error.message);
+            console.error('Error restoring data:', error);
+            alert('Failed to restore data. Please ensure the backup file is valid.');
         }
-    };
-
-    reader.onerror = function(error) {
-        console.error('File reading failed:', error);
-        alert('Failed to read backup file');
     };
 
     reader.readAsText(file);
@@ -401,40 +509,47 @@ function clearAllData() {
     }
 
     try {
-        // Create backup before clearing
+        // Backup current data before clearing
         const backupBeforeClear = {
-            brands: safeGetStorageData('brands', []),
-            products: safeGetStorageData('products', []),
-            bills: safeGetStorageData('bills', []),
+            brands: JSON.parse(localStorage.getItem('brands')) || [],
+            products: JSON.parse(localStorage.getItem('products')) || [],
+            bills: JSON.parse(localStorage.getItem('bills')) || [],
+            staff: JSON.parse(localStorage.getItem('staff')) || [],
             currentBillNumber: parseInt(localStorage.getItem('currentBillNumber')) || 1,
             timestamp: new Date().toISOString(),
             version: '1.0'
         };
 
+        // Save backup in sessionStorage for recovery in case of errors
         sessionStorage.setItem('clearBackup', JSON.stringify(backupBeforeClear));
 
-        // Clear all data
+        // Clear all relevant data
         localStorage.removeItem('brands');
         localStorage.removeItem('products');
         localStorage.removeItem('bills');
+        localStorage.removeItem('staff');
         localStorage.removeItem('currentBillNumber');
 
         alert('All data cleared successfully! The page will now reload.');
         window.location.reload();
     } catch (error) {
         console.error('Clear data failed:', error);
-        alert('Failed to clear data: ' + error.message);
-        
-        // Attempt to recover
+        alert('Failed to clear data. Please try again.');
+
+        // Attempt to recover data from sessionStorage backup
         try {
-            const recovery = JSON.parse(sessionStorage.getItem('clearBackup'));
-            safeSetStorageData('brands', recovery.brands);
-            safeSetStorageData('products', recovery.products);
-            safeSetStorageData('bills', recovery.bills);
-            localStorage.setItem('currentBillNumber', recovery.currentBillNumber.toString());
+            const recoveryData = JSON.parse(sessionStorage.getItem('clearBackup'));
+            if (recoveryData) {
+                localStorage.setItem('brands', JSON.stringify(recoveryData.brands));
+                localStorage.setItem('products', JSON.stringify(recoveryData.products));
+                localStorage.setItem('bills', JSON.stringify(recoveryData.bills));
+                localStorage.setItem('staff', JSON.stringify(recoveryData.staff));
+                localStorage.setItem('currentBillNumber', recoveryData.currentBillNumber.toString());
+            }
+            alert('Data has been recovered from the last backup.');
         } catch (recoveryError) {
             console.error('Recovery failed:', recoveryError);
-            alert('Critical error: Please contact support');
+            alert('Critical error: Please contact support.');
         }
     }
 }
