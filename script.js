@@ -10,6 +10,22 @@ function initStorage() {
 // Call initStorage when the page loads
 window.onload = initStorage;
 
+function isLocalStorageAvailable() {
+    try {
+        const testKey = "__test__";
+        localStorage.setItem(testKey, "test");
+        localStorage.removeItem(testKey);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+if (!isLocalStorageAvailable()) {
+    alert("LocalStorage is not supported in this browser. Please use a supported browser.");
+}
+
+
 function getCurrentBillNumber() {
     return parseInt(localStorage.getItem('currentBillNumber')) || 1;
 }
