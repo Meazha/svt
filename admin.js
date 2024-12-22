@@ -30,95 +30,9 @@ function showSection(section) {
     }
 }
 
-let staffList = JSON.parse(localStorage.getItem('staff')) || [];
-
-function showSection(section) {
-    const sections = ['data-management', 'bill-records', 'staff-management'];
-    sections.forEach(sec => {
-        document.getElementById(`${sec}-section`).style.display = sec === section ? 'block' : 'none';
-    });
-}
-
-    function addStaff() {
-        const name = document.getElementById('staff-name').value.trim();
-        const email = document.getElementById('staff-email').value.trim();
-        const role = document.getElementById('staff-role').value.trim();
-
-        if (!name || !email || !role) {
-            alert('Please fill in all fields.');
-            return;
-        }
-
-        const newStaff = {
-            id: Date.now(),
-            name,
-            email,
-            role,
-            status: 'Active'
-        };
-
-        staffList.push(newStaff);
-        localStorage.setItem('staff', JSON.stringify(staffList));
-
-        document.getElementById('staff-name').value = '';
-        document.getElementById('staff-email').value = '';
-        document.getElementById('staff-role').value = '';
-
-        renderStaffList();
-    }
-
-    function renderStaffList() {
-        const tbody = document.getElementById('staff-table-body');
-        tbody.innerHTML = '';
-
-        staffList.forEach(staff => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${staff.name}</td>
-                <td>${staff.email}</td>
-                <td>${staff.role}</td>
-                <td>${staff.status}</td>
-                <td>
-                    <button class="btn btn-secondary" onclick="toggleStaffStatus(${staff.id})">
-                        ${staff.status === 'Active' ? 'Deactivate' : 'Activate'}
-                    </button>
-                    <button class="btn btn-primary" onclick="editStaff(${staff.id})">Edit</button>
-                    <button class="btn btn-danger" onclick="deleteStaff(${staff.id})">Delete</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    function toggleStaffStatus(id) {
-        const staff = staffList.find(s => s.id === id);
-        if (staff) {
-            staff.status = staff.status === 'Active' ? 'Inactive' : 'Active';
-            localStorage.setItem('staff', JSON.stringify(staffList));
-            renderStaffList();
-        }
-    }
-
-    function editStaff(id) {
-        const staff = staffList.find(s => s.id === id);
-        if (staff) {
-            document.getElementById('staff-name').value = staff.name;
-            document.getElementById('staff-email').value = staff.email;
-            document.getElementById('staff-role').value = staff.role;
-
-            deleteStaff(id);
-        }
-    }
-
-    function deleteStaff(id) {
-        staffList = staffList.filter(s => s.id !== id);
-        localStorage.setItem('staff', JSON.stringify(staffList));
-        renderStaffList();
-    }
-
+// Show Bill Records by default on page load
 window.onload = function () {
     showSection('bill-records');
-    renderStaffList();
 };
 
 function logout() {
