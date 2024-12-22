@@ -20,6 +20,19 @@ function incrementBillNumber() {
     return nextNumber - 1; // Return the current number before increment
 }
 
+function loadStaffDropdown() {
+    const staffSelect = document.getElementById('staff-select');
+    staffSelect.innerHTML = '<option value="">Select Staff</option>'; // Clear existing options
+
+    const staffList = JSON.parse(localStorage.getItem('staff')) || [];
+    staffList.forEach(staff => {
+        const option = document.createElement('option');
+        option.value = staff.id; // Use staff ID as the value
+        option.textContent = `${staff.name} (${staff.role})`;
+        staffSelect.appendChild(option);
+    });
+}
+
 // Navigation
 function showSection(sectionName) {
     const sections = ['products', 'billing', 'reports'];
@@ -36,6 +49,7 @@ function showSection(sectionName) {
 
 // Show the Billing section by default on page load
 window.onload = function () {
+    loadStaffDropdown();
     showSection('billing');
 };
 
@@ -459,6 +473,15 @@ function generateBill() {
         return;
     }
 
+    const staffId = document.getElementById('staff-select').value;
+    if (!staffId) {
+        alert('Please select a staff member');
+        return;
+    }
+
+    const staffList = JSON.parse(localStorage.getItem('staff')) || [];
+    const staff = staffList.find(s => s.id == staffId);
+
     const billNumber = incrementBillNumber();
     const subtotal = currentBillItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
     const gstPercentage = parseFloat(document.getElementById('gst-percentage').value) || 0;
@@ -469,7 +492,8 @@ function generateBill() {
         id: Date.now(),
         billNumber: billNumber,
         date: new Date().toISOString(),
-        customer: customerInfo, // Add customer information
+        customer: customerInfo,
+        staff: staff, // Add staff details
         items: currentBillItems.map(item => ({
             ...item,
             itemTotal: item.quantity * item.price
@@ -490,6 +514,7 @@ function generateBill() {
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-mobile').value = '';
     document.getElementById('customer-address').value = '';
+    document.getElementById('staff-select').value = ''; // Clear staff selection
     updateBillItemsTable();
     alert(`Bill #${billNumber} Generated Successfully!`);
 }
@@ -511,7 +536,6 @@ function cancelBill(billId) {
 }
 
 function showBillDetails(bill) {
-    // Add customer information section
     const customerInfo = `
         <div class="customer-details">
             <h4>Customer Information</h4>
@@ -521,8 +545,14 @@ function showBillDetails(bill) {
         </div>
     `;
 
-    // Rest of your existing showBillDetails code...
-    const itemsList = bill.items.map(item => 
+    const staffInfo = `
+        <div class="staff-details">
+            <h4>Staff Information</h4>
+            <p><strong>Staff:</strong> ${bill.staff?.name || 'N/A'} (${bill.staff?.role || 'N/A'})</p>
+        </div>
+    `;
+
+    const itemsList = bill.items.map(item =>
         `<tr>
             <td style="text-align: center;">${item.productName}</td>
             <td style="text-align: center;">${item.quantity} KG</td>
@@ -531,22 +561,12 @@ function showBillDetails(bill) {
         </tr>`
     ).join('');
 
-    const statusBadge = `
-        <div class="status-container">
-            <span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span>
-            ${bill.status === 'CANCELLED' ? 
-                `<p class="cancelled-info">Cancelled on ${new Date(bill.cancellationDate).toLocaleDateString()}</p>` : 
-                ''
-            }
-        </div>
-    `;
-
     const detailsHTML = `
         <div style="margin-top: 15px; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
-            <h3>Bill Details : ${bill.billNumber}</h3>
+            <h3>Bill Details: ${bill.billNumber}</h3>
             <p>Date: ${new Date(bill.date).toLocaleString()}</p>
             ${customerInfo}
-            ${statusBadge}
+            ${staffInfo}
             <table style="width: 100%; margin-top: 10px;">
                 <thead>
                     <tr>
