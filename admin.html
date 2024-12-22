@@ -122,35 +122,31 @@
     <!-- Admin Panel Content -->
     <div id="admin-section" class="admin-container container">
         <nav>
-            <button onclick="window.location.href='index.html'">Back to Main</button>
+            <button onclick="showSection('data-management')">Data Management</button>
+            <button onclick="showSection('bill-records')">Bill Records</button>
+            <button onclick="showSection('staff-management')">Staff Management</button>
             <button onclick="logout()">Logout</button>
         </nav>
-
-        <div class="backup-restore-section">
-            <h3>Data Management</h3>
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="backupData()">
-                    Download Backup
-                </button>
-                <div class="file-upload-wrapper">
-                    <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(event)">
-                    <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()">
-                        Restore from Backup
-                    </button>
+        
+        <div id="data-management-section" class="section" style="display: none;">
+            <!-- Data Management Content -->
+            <div class="backup-restore-section">
+                <h3>Data Management</h3>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="backupData()">Download Backup</button>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(event)">
+                        <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()">Restore from Backup</button>
+                    </div>
+                    <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+                    <button class="btn btn-primary" onclick="resetBillNumber()">Reset Bill Number</button>
                 </div>
-                <button class="btn btn-danger" onclick="clearAllData()">
-                    Clear All Data
-                </button>
-                <button class="btn btn-primary" onclick="resetBillNumber()">
-                    Reset Bill Number
-                </button>
             </div>
         </div>
-
-        <div class="section">
+        
+        <div id="bill-records-section" class="section" style="display: block;">
+            <!-- Bill Records Content -->
             <h2>Bill Records</h2>
-            
-            <!-- Search and Filter -->
             <div class="search-filters">
                 <input type="date" id="filter-date" placeholder="Filter by Date">
                 <input type="number" id="filter-billnumber" placeholder="Search Bill Number">
@@ -163,10 +159,38 @@
                 <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
                 <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
             </div>
-
-            <!-- Bills List -->
             <div id="bills-container">
                 <!-- Bills will be dynamically added here -->
+            </div>
+        </div>   
+        
+        <div id="staff-management-section" class="section" style="display: none;">
+            <h2>Staff Management</h2>
+        
+            <!-- Add Staff Form -->
+            <div class="form-group">
+                <input type="text" id="staff-name" placeholder="Staff Name" required>
+                <input type="email" id="staff-email" placeholder="Staff Phone/Email" required>
+                <input type="text" id="staff-role" placeholder="Role (e.g., Admin, Clerk)" required>
+                <button class="btn btn-primary" onclick="addStaff()">Add Staff</button>
+            </div>
+        
+            <!-- Staff List -->
+            <div class="table-responsive">
+                <table id="staff-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone / Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staff-table-body">
+                        <!-- Staff data will be dynamically added here -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -186,6 +210,6 @@
         document.querySelector('button[onclick*="admin.html"]').addEventListener('click', (e) => {
             saveDbState();
         });
-    </script>
+    </script>    
 </body>
 </html>
