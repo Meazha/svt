@@ -10,56 +10,6 @@ function initStorage() {
 // Call initStorage when the page loads
 window.onload = initStorage;
 
-const appVersion = "1.0.1";
-
-if (localStorage.getItem("appVersion") !== appVersion) {
-    localStorage.clear(); // Clear outdated data
-    localStorage.setItem("appVersion", appVersion);
-}
-
-self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open('app-cache-v1').then(cache => {
-            return cache.addAll([
-                '/index.html',
-                '/styles.css',
-                '/script.js'
-            ]);
-        })
-    );
-});
-
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== 'app-cache-v1') {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-    );
-});
-
-
-function isLocalStorageAvailable() {
-    try {
-        const testKey = "__test__";
-        localStorage.setItem(testKey, "test");
-        localStorage.removeItem(testKey);
-        return true;
-    } catch (error) {
-        return false;
-    }
-}
-
-if (!isLocalStorageAvailable()) {
-    alert("LocalStorage is not supported in this browser. Please use a supported browser.");
-}
-
-
 function getCurrentBillNumber() {
     return parseInt(localStorage.getItem('currentBillNumber')) || 1;
 }
@@ -72,17 +22,19 @@ function incrementBillNumber() {
 
 // Navigation
 function showSection(sectionName) {
-    ['products', 'billing', 'reports'].forEach(section => {
-        document.getElementById(`${section}-section`).style.display = 
-            section === sectionName ? 'block' : 'none';
+    const sections = ['products', 'billing', 'reports'];
+    sections.forEach(section => {
+        const sectionElement = document.getElementById(`${section}-section`);
+        sectionElement.style.display = section === sectionName ? 'block' : 'none';
     });
 
     // Refresh data when switching sections
     if (sectionName === 'products') loadProductsList();
     if (sectionName === 'billing') loadBrandsList();
-    if (sectionName === 'reports') loadReportData();
+    if (sectionName === 'reports') generateReport();
 }
 
+// Show the Billing section by default on page load
 window.onload = function () {
     showSection('billing');
 };
@@ -155,31 +107,33 @@ function addBrand() {
 // Product Management
 function addProduct() {
     const brandSelect = document.getElementById('product-brand');
-    const productName = document.getElementById('product-name').value;
+    const productName = document.getElementById('product-name').value.trim();
     const productPrice = parseFloat(document.getElementById('product-price').value);
     const brandId = brandSelect.value;
 
-    if (!brandId || !productName || !productPrice) {
-        alert('Please fill all product details');
+    if (!brandId || !productName || isNaN(productPrice) || productPrice <= 0) {
+        alert('Please fill all product details correctly.');
         return;
     }
 
-    const products = JSON.parse(localStorage.getItem('products'));
+    // Fetch existing products from localStorage
+    const products = JSON.parse(localStorage.getItem('products')) || [];
     const newProduct = {
         id: Date.now(),
         brandId: brandId,
         name: productName,
-        price: productPrice,
-        tax: 0 // Default tax to 0
+        price: productPrice
     };
 
+    // Add the new product to the list
     products.push(newProduct);
     localStorage.setItem('products', JSON.stringify(products));
 
-    // Clear inputs
+    // Clear input fields
     document.getElementById('product-name').value = '';
     document.getElementById('product-price').value = '';
 
+    // Reapply the filter for the selected brand
     filterProductsByBrand();
 }
 
