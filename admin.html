@@ -2,265 +2,190 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Sri Vinayaga Traders</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sri Vinayaga Traders - Product Management and Billing System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
-    <style>
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .admin-container {
-            display: none;
-        }
-
-        .bill-details {
-            background-color: #f8f8f8;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        .bill-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .bill-items {
-            margin-top: 10px;
-        }
-
-        .bill-totals {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-            text-align: right;
-        }
-
-        .search-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .search-filters input,
-        .search-filters select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            flex: 1;
-        }
-
-        .expand-btn {
-            background: none;
-            border: none;
-            color: #333;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .bill-items-table {
-            width: 100%;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .backup-restore-section {
-            background-color: #f8f8f8;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        .backup-restore-section h3 {
-            margin-bottom: 15px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        .form-container {
-            background-color: #f8f8f8;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        .staff-list {
-            background-color: #f8f8f8;
-            padding: 20px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        .form-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .form-group input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            flex: 1;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .table th,
-        .table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .table th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>SRI VINAYAGA TRADERS - ADMIN PANEL</h1>
+        <h1>SRI VINAYAGA TRADERS</h1>
     </header>
-
-    <!-- Login Form -->
-    <div id="login-section" class="login-container">
-        <h2>Admin Login</h2>
-        <div class="form-group">
-            <input type="password" id="admin-password" placeholder="Enter Admin Password">
-            <button class="btn btn-primary" onclick="validateLogin()">Login</button>
-        </div>
-    </div>
-
-    <!-- Admin Panel Content -->
-    <div id="admin-section" class="admin-container container">
+    <div class="container">
         <nav>
-            <button onclick="showSection('data-management')">Data Management</button>
-            <button onclick="showSection('bill-records')">Bill Records</button>
-            <button onclick="showSection('staff-management')">Staff Management</button>
-            <button onclick="logout()">Logout</button>
+            <button onclick="showSection('products')">Products</button>
+            <button onclick="showSection('billing')">Billing</button>
+            <button onclick="showSection('reports')">Reports</button>
+            <button onclick="window.location.href='admin.html'">Admin</button>
         </nav>
 
-        <div id="data-management-section" class="section" style="display: none;">
-            <!-- Data Management Content -->
-            <div class="backup-restore-section">
-                <h3>Data Management</h3>
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="backupData()">Download Backup</button>
-                    <div class="file-upload-wrapper">
-                        <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(event)">
-                        <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()">Restore from Backup</button>
-                    </div>
-                    <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
-                    <button class="btn btn-primary" onclick="resetBillNumber()">Reset Bill Number</button>
-                </div>
-            </div>
-        </div>
-        
-        <div id="bill-records-section" class="section" style="display: block;">
-            <!-- Bill Records Content -->
-            <h2>Bill Records</h2>
-            <div class="search-filters">
-                <input type="date" id="filter-date" placeholder="Filter by Date">
-                <input type="number" id="filter-billnumber" placeholder="Search Bill Number">
-                <select id="filter-amount">
-                    <option value="">Filter by Amount</option>
-                    <option value="0-1000">₹0 - ₹1,000</option>
-                    <option value="1000-5000">₹1,000 - ₹5,000</option>
-                    <option value="5000+">₹5,000+</option>
-                </select>
-                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
-                <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
-            </div>
-            <div id="bills-container">
-                <!-- Bills will be dynamically added here -->
-            </div>
-        </div>
-
-        <div id="staff-management-section" class="section" style="display: none;">
-            <h2>Staff Management</h2>
+        <!-- Products Section -->
+        <section id="products-section" class="section">
+            <h2>Products Management</h2>
             
-            <!-- Staff Form -->
-            <div class="form-container">
-                <h3>Add New Staff</h3>
-                <div class="form-group">
-                    <input type="text" id="staff-name" placeholder="Staff Name" required>
-                    <input type="text" id="staff-mobile" placeholder="Mobile Number" required>
-                    <input type="text" id="staff-role" placeholder="Role" required>
-                    <button class="btn btn-primary" onclick="addStaff()">
-                        <i class="icon">+</i> Add Staff
-                    </button>
-                </div>
+            <!-- Brand Management -->
+            <div class="form-group">
+                <input type="text" id="brand-name" placeholder="Brand Name" required>
+                <input type="text" id="brand-description" placeholder="Description">
+                <button class="btn btn-primary" onclick="addBrand()">
+                    <i class="icon">+</i> Add Brand
+                </button>
             </div>
 
-            <!-- Staff List -->
-            <div class="staff-list">
-                <h3>Current Staff</h3>
-                <table class="table">
+            <!-- Product Management -->
+            <div class="form-group">
+                <select id="product-brand" onchange="filterProductsByBrand()" required>
+                    <option value="">Select Brand</option>
+                </select>
+                <input type="text" id="product-name" placeholder="Product Name" required>
+                <input type="number" id="product-price" placeholder="Price per KG" step="0.01" required>
+                <button class="btn btn-primary" onclick="addProduct()">
+                    <i class="icon">+</i> Add Product
+                </button>
+            </div>
+
+            <!-- Product List -->
+            <div class="table-responsive">
+                <table id="products-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Role</th>
-                            <th>Actions</th>
+                            <th style="text-align: center;">Brand</th>
+                            <th style="text-align: center;">Product</th>
+                            <th style="text-align: center;">Price/KG</th>
+                            <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="staff-table-body">
-                        <!-- Staff entries will be dynamically added here -->
+                    <tbody id="products-table-body">
+                        <!-- Products will be dynamically added here -->
                     </tbody>
                 </table>
             </div>
-        </div>
+        </section>
+
+        <!-- Billing Section Remains the Same -->
+        <section id="billing-section" class="section" style="display:block;">
+            <h2>Billing</h2>
+
+            <div class="form-group">
+                <label for="staff-select">Select Staff:</label>
+                <select id="staff-select" required>
+                    <option value="">Select Staff</option>
+                </select>
+            </div>            
+
+            <div class="customer-info-section">
+                <h3>Customer Information</h3>
+                <div class="form-group">
+                    <input type="text" id="customer-name" placeholder="Customer Name" required>
+                    <input type="tel" id="customer-mobile" placeholder="Mobile Number" pattern="[0-9]{10}" required>
+                    <textarea id="customer-address" placeholder="Address" rows="2" required></textarea>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="input-group">
+                    <select id="billing-brand" onchange="updateProductList()">
+                        <option value="">Select Brand</option>
+                    </select>
+                    <input type="text" id="billing-brand-manual" placeholder="Or enter brand manually" style="display: none;">
+                    <button class="btn btn-secondary" id="toggle-brand-input" onclick="toggleBrandInput()">
+                        <i class="icon">✎</i>
+                    </button>
+                </div>
+            
+                <div class="input-group">
+                    <select id="billing-product" onchange="updateProductPrice()">
+                        <option value="">Select Product</option>
+                    </select>
+                    <input type="text" id="billing-product-manual" placeholder="Or enter product manually" style="display: none;">
+                    <button class="btn btn-secondary" id="toggle-product-input" onclick="toggleProductInput()">
+                        <i class="icon">✎</i>
+                    </button>
+                </div>
+            
+                <input type="number" id="billing-quantity" placeholder="Quantity (KG)" step="0.01" required>
+                <input type="number" id="billing-manual-price" placeholder="Price/KG" step="0.01" style="display: none;">
+                <button class="btn btn-primary" onclick="addProductToBill()">
+                    <i class="icon">+</i> Add to Bill
+                </button>
+            </div>
+
+            <!-- Bill Items Table -->
+            <div class="table-responsive">
+                <table id="bill-items-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Brand / Product</th>
+                            <th style="text-align: center;">Quantity</th>
+                            <th style="text-align: center;">Price</th>
+                            <th style="text-align: center;">Total</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bill-items-body">
+                        <!-- Bill items will be dynamically added -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bill-summary">
+                <div class="tax-calculation">
+                    <div class="form-group">
+                        <label for="gst-percentage">GST %:</label>
+                        <input type="number" id="gst-percentage" placeholder="Enter GST %" value="0" min="0" max="100" step="0.01" onchange="updateBillTotals()">
+                    </div>
+                </div>
+                <p>Subtotal: ₹<span id="bill-subtotal">0.00</span></p>
+                <p>GST Amount: ₹<span id="gst-amount">0.00</span></p>
+                <p class="total-amount">Grand Total: ₹<span id="bill-total-amount">0.00</span></p>
+                <button class="btn btn-success" onclick="generateBill()">
+                    <i class="icon">✓</i> Generate Bill
+                </button>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports-section" class="section" style="display:none;">
+            <h2>Reports</h2>
+            
+            <div id="today-summary" class="today-summary">
+                <!-- Today's summary will be dynamically populated -->
+            </div>
+
+            <div class="report-filters">
+                <select id="report-type">
+                    <option value="daily">Daily Report</option>
+                    <option value="weekly">Weekly Report</option>
+                    <option value="monthly">Monthly Report</option>
+                    <option value="custom">Custom Date Range</option>
+                </select>
+
+                <input type="date" id="start-date">
+                <input type="date" id="end-date">
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <i class="icon">📊</i> Generate Report
+                </button>
+            </div>
+
+            <!-- Report Table -->
+            <div class="table-responsive">
+                <table id="report-table">
+                    <thead>
+                        <tr>
+                            <th>Bill ID</th>
+                            <th>Subtotal</th>
+                            <th>GST Amount</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-table-body">
+                        <!-- Report data will be dynamically added -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
-
-    <script src="admin.js"></script>
-    <script>
-        // Add this to your main page's script
-        function saveDbState() {
-            if (db) {
-                const data = db.export();
-                const array = new Uint8Array(data);
-                sessionStorage.setItem('database', JSON.stringify(Array.from(array)));
-            }
-        }
-
-        // Add this to your navigation button
-        document.querySelector('button[onclick*="admin.html"]').addEventListener('click', (e) => {
-            saveDbState();
-        });
-    </script>
+<script src="script.js"></script>
 </body>
 </html>
