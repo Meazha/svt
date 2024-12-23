@@ -737,10 +737,6 @@ const html2pdfScript = document.createElement('script');
 html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
 document.head.appendChild(html2pdfScript);
 
-const html2pdfScript = document.createElement('script');
-html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-document.head.appendChild(html2pdfScript);
-
 function generateBillPDF(bill) {
     const billHTML = `
         <div style="padding: 10px; font-family: Arial, sans-serif; max-width: 100%; width: 100%; box-sizing: border-box;">
@@ -832,6 +828,7 @@ function generateBillPDF(bill) {
 
     html2pdf().from(element).set(opt).save();
 }
+
 
 // Initialize brands and products list on page load
 window.addEventListener('load', () => {
