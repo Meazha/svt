@@ -1,7 +1,5 @@
-// Admin password - in a real application, this should be handled securely on a server
-const ADMIN_PASSWORD = "123"; // Change this to your desired password
+const ADMIN_PASSWORD = "123";
 
-// Check if already logged in
 window.onload = function() {
     const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
     if (isLoggedIn === 'true') {
@@ -11,7 +9,6 @@ window.onload = function() {
     }
 };
 
-// Function to show sections including staff management
 function showSection(section) {
     const dataManagement = document.getElementById('data-management-section');
     const billRecords = document.getElementById('bill-records-section');
