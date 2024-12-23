@@ -737,36 +737,47 @@ const html2pdfScript = document.createElement('script');
 html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
 document.head.appendChild(html2pdfScript);
 
+const html2pdfScript = document.createElement('script');
+html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+document.head.appendChild(html2pdfScript);
+
 function generateBillPDF(bill) {
     const billHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h2>SRI VINAYAGA TRADERS</h2>
-                <p>123 Main Street, City, State - PIN</p>
-                <p>Phone: +91 1234567890</p>
+        <div style="padding: 10px; font-family: Arial, sans-serif; max-width: 100%; width: 100%; box-sizing: border-box;">
+            <!-- Header Section -->
+            <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                <h2 style="margin: 0; font-size: 20px;">SRI VINAYAGA TRADERS</h2>
+                <p style="margin: 5px 0; font-size: 12px;">123 Main Street, City, State - PIN</p>
+                <p style="margin: 5px 0; font-size: 12px;">Phone: +91 1234567890</p>
             </div>
             
-            <div style="margin-bottom: 20px;">
-                <h3>Bill Details</h3>
-                <p><strong>Bill Number:</strong> ${bill.billNumber}</p>
-                <p><strong>Date:</strong> ${new Date(bill.date).toLocaleString()}</p>
+            <!-- Bill Details Section -->
+            <div style="margin-bottom: 15px;">
+                <h3 style="font-size: 16px; margin-bottom: 5px;">Bill Details</h3>
+                <p style="margin: 5px 0; font-size: 12px;"><strong>Bill Number:</strong> ${bill.billNumber}</p>
+                <p style="margin: 5px 0; font-size: 12px;"><strong>Date:</strong> ${new Date(bill.date).toLocaleString()}</p>
             </div>
 
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <h4>Customer Details</h4>
-                    <p><strong>Name:</strong> ${bill.customer.name}</p>
-                    <p><strong>Mobile:</strong> ${bill.customer.mobile}</p>
-                    <p><strong>Address:</strong> ${bill.customer.address}</p>
+            <!-- Customer and Staff Information -->
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                <!-- Customer Details -->
+                <div style="flex: 1; min-width: 45%; background: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+                    <h4 style="font-size: 14px; margin-bottom: 5px;">Customer Details</h4>
+                    <p style="margin: 5px 0; font-size: 12px;"><strong>Name:</strong> ${bill.customer.name}</p>
+                    <p style="margin: 5px 0; font-size: 12px;"><strong>Mobile:</strong> ${bill.customer.mobile}</p>
+                    <p style="margin: 5px 0; font-size: 12px;"><strong>Address:</strong> ${bill.customer.address}</p>
                 </div>
-                <div style="flex: 1;">
-                    <h4>Staff Details</h4>
-                    <p><strong>Name:</strong> ${bill.staff.name}</p>
-                    <p><strong>Role:</strong> ${bill.staff.role}</p>
+                
+                <!-- Staff Details -->
+                <div style="flex: 1; min-width: 45%; background: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+                    <h4 style="font-size: 14px; margin-bottom: 5px;">Staff Details</h4>
+                    <p style="margin: 5px 0; font-size: 12px;"><strong>Name:</strong> ${bill.staff.name}</p>
+                    <p style="margin: 5px 0; font-size: 12px;"><strong>Role:</strong> ${bill.staff.role}</p>
                 </div>
             </div>
 
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <!-- Product Details Table -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
                 <thead>
                     <tr>
                         <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Product</th>
@@ -800,8 +811,9 @@ function generateBillPDF(bill) {
                     </tr>
                 </tfoot>
             </table>
-            
-            <div style="text-align: center; margin-top: 30px;">
+
+            <!-- Footer Section -->
+            <div style="text-align: center; margin-top: 30px; font-size: 12px;">
                 <p>Thank you for your business!</p>
             </div>
         </div>
@@ -811,10 +823,10 @@ function generateBillPDF(bill) {
     element.innerHTML = billHTML;
 
     const opt = {
-        margin: 1,
+        margin: 0.5,
         filename: `Bill-${bill.billNumber}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: { scale: 3 }, // Higher scale for better resolution
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
