@@ -718,6 +718,9 @@ function generateReport() {
                     `<button class="btn btn-danger" onclick="cancelBill(${bill.id})">Cancel Bill</button>` : 
                     `<span class="cancelled-date">Cancelled on ${new Date(bill.cancellationDate).toLocaleDateString()}</span>`
                 }
+                <button class="btn btn-primary" onclick="generateBillPDF(${JSON.stringify(bill).replace(/"/g, '&quot;')})">
+                    <i class="icon">⬇️</i> Download PDF
+                </button>
             </td>
         `;
         
@@ -728,8 +731,94 @@ function generateReport() {
             cells[i].onclick = () => showBillDetails(bill);
         }
     });
+}
 
-    
+const html2pdfScript = document.createElement('script');
+html2pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+document.head.appendChild(html2pdfScript);
+
+function generateBillPDF(bill) {
+    const billHTML = `
+        <div style="padding: 20px; font-family: Arial, sans-serif;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2>SRI VINAYAGA TRADERS</h2>
+                <p>123 Main Street, City, State - PIN</p>
+                <p>Phone: +91 1234567890</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h3>Bill Details</h3>
+                <p><strong>Bill Number:</strong> ${bill.billNumber}</p>
+                <p><strong>Date:</strong> ${new Date(bill.date).toLocaleString()}</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <h4>Customer Details</h4>
+                    <p><strong>Name:</strong> ${bill.customer.name}</p>
+                    <p><strong>Mobile:</strong> ${bill.customer.mobile}</p>
+                    <p><strong>Address:</strong> ${bill.customer.address}</p>
+                </div>
+                <div style="flex: 1;">
+                    <h4>Staff Details</h4>
+                    <p><strong>Name:</strong> ${bill.staff.name}</p>
+                    <p><strong>Role:</strong> ${bill.staff.role}</p>
+                </div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Product</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Quantity (KG)</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Price/KG</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${bill.items.map(item => `
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${item.brandName} - ${item.productName}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.quantity}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹${item.price.toFixed(2)}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹${(item.quantity * item.price).toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>Subtotal:</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹${bill.subtotal.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>GST (${bill.gstPercentage}%):</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">₹${bill.gstAmount.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>Total Amount:</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>₹${bill.totalAmount.toFixed(2)}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <p>Thank you for your business!</p>
+            </div>
+        </div>
+    `;
+
+    const element = document.createElement('div');
+    element.innerHTML = billHTML;
+
+    const opt = {
+        margin: 1,
+        filename: `Bill-${bill.billNumber}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(element).set(opt).save();
 }
 
 // Initialize brands and products list on page load
