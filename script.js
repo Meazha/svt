@@ -560,12 +560,14 @@ function generateProfessionalBillPDF(bill) {
                 <p style="margin: 5px 0; font-size: 14px;">Email: info@srivinayagatraders.com</p>
             </div>
 
+            <h1 STYLE="font-size: 24px; text-align: center;">ESTIMATE</h1>
+
             <!-- Bill Info Section -->
             <div style="margin-bottom: 20px; border-bottom: 1px solid #000; padding-bottom: 5;">
                 <table style="width: 100%; font-size: 14px;">
                     <tr>
                         <td style="width: 30%; text-align: center;">
-                            <strong>Bill No:</strong> ${bill.billNumber}
+                            <strong>Estimate No:</strong> ${bill.billNumber}
                         </td>
                         <td style="width: 35%; text-align: center;">
                             <strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}
