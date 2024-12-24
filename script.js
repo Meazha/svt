@@ -570,15 +570,10 @@ function generateProfessionalBillPDF(bill) {
                         <td style="width: 50%; text-align: right;">
                             <strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}
                         </td>
-                    </tr>
-                    <tr>
                         <td>
                             <strong>Time:</strong> ${new Date(bill.date).toLocaleTimeString()}
                         </td>
-                        <td style="text-align: right;">
-                            <strong>Mode of Payment:</strong> CASH
-                        </td>
-                    </tr>
+                    </tr>                   
                 </table>
             </div>
 
@@ -677,7 +672,6 @@ function generateProfessionalBillPDF(bill) {
 
     // PDF options
     const opt = {
-        margin: [10, 10, 10, 10],
         filename: `Bill-${bill.billNumber}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
