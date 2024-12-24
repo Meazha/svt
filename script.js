@@ -561,7 +561,7 @@ function generateProfessionalBillPDF(bill) {
             </div>
 
             <!-- Bill Info Section -->
-            <div style="margin-bottom: 20px; border-bottom: 1px solid #000; padding-bottom: 10px;">
+            <div style="margin-bottom: 20px; border-bottom: 1px solid #000; padding-bottom: 5;">
                 <table style="width: 100%; font-size: 14px;">
                     <tr>
                         <td style="width: 30%; text-align: center;">
