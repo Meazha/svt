@@ -317,6 +317,16 @@ function createBillElement(bill) {
     detailsRow.innerHTML = `
         <td colspan="7">
             <div class="bill-details-content">
+                <div class="bill-header-details" style="background-color: #f5f5f5; padding: 15px; margin-bottom: 20px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0; color: #333;">Bill #${bill.billNumber}</h3>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0;"><strong>Date:</strong> ${dateStr}</p>
+                        <p style="margin: 0;"><strong>Time:</strong> ${timeStr}</p>
+                    </div>
+                </div>
+                
                 <div class="details-section">
                     <div class="customer-details">
                         <h4>Customer Details</h4>
@@ -376,6 +386,14 @@ function createBillElement(bill) {
                         <tr>
                             <td class="totals-label">GST (${bill.gstPercentage}%):</td>
                             <td class="totals-value">₹${bill.gstAmount.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td class="totals-label">Transport Charges:</td>
+                            <td class="totals-value">₹${(bill.transportCharges || 0).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td class="totals-label">Extra Charges:</td>
+                            <td class="totals-value">₹${(bill.extraCharges || 0).toFixed(2)}</td>
                         </tr>
                         <tr class="total-row">
                             <td class="totals-label">Total Amount:</td>
