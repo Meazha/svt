@@ -449,11 +449,16 @@ function updateBillTotals(subtotal = null) {
     }
 
     const gstPercentage = parseFloat(document.getElementById('gst-percentage').value) || 0;
+    const transportCharges = parseFloat(document.getElementById('transport-charges').value) || 0;
+    const extraCharges = parseFloat(document.getElementById('extra-charges').value) || 0;
+    
     const gstAmount = subtotal * (gstPercentage / 100);
-    const grandTotal = subtotal + gstAmount;
+    const grandTotal = subtotal + gstAmount + transportCharges + extraCharges;
 
     document.getElementById('bill-subtotal').textContent = subtotal.toFixed(2);
     document.getElementById('gst-amount').textContent = gstAmount.toFixed(2);
+    document.getElementById('transport-amount').textContent = transportCharges.toFixed(2);
+    document.getElementById('extra-amount').textContent = extraCharges.toFixed(2);
     document.getElementById('bill-total-amount').textContent = grandTotal.toFixed(2);
 }
 
@@ -485,15 +490,18 @@ function generateBill() {
     const billNumber = incrementBillNumber();
     const subtotal = currentBillItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
     const gstPercentage = parseFloat(document.getElementById('gst-percentage').value) || 0;
+    const transportCharges = parseFloat(document.getElementById('transport-charges').value) || 0;
+    const extraCharges = parseFloat(document.getElementById('extra-charges').value) || 0;
+    
     const gstAmount = subtotal * (gstPercentage / 100);
-    const grandTotal = subtotal + gstAmount;
+    const grandTotal = subtotal + gstAmount + transportCharges + extraCharges;
 
     const bill = {
         id: Date.now(),
         billNumber: billNumber,
         date: new Date().toISOString(),
         customer: customerInfo,
-        staff: staff, // Add staff details
+        staff: staff,
         items: currentBillItems.map(item => ({
             ...item,
             itemTotal: item.quantity * item.price
@@ -501,6 +509,8 @@ function generateBill() {
         subtotal: subtotal,
         gstPercentage: gstPercentage,
         gstAmount: gstAmount,
+        transportCharges: transportCharges,
+        extraCharges: extraCharges,
         totalAmount: grandTotal,
         status: 'ACTIVE'
     };
@@ -514,7 +524,10 @@ function generateBill() {
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-mobile').value = '';
     document.getElementById('customer-address').value = '';
-    document.getElementById('staff-select').value = ''; // Clear staff selection
+    document.getElementById('staff-select').value = '';
+    document.getElementById('transport-charges').value = '0';
+    document.getElementById('extra-charges').value = '0';
+    document.getElementById('gst-percentage').value = '0';
     updateBillItemsTable();
     alert(`Bill #${billNumber} Generated Successfully!`);
 }
@@ -561,10 +574,23 @@ function showBillDetails(bill) {
         </tr>`
     ).join('');
 
+    // Adding status information
+    const statusInfo = `
+        <div class="status-container">
+            <p><strong>Status:</strong> 
+                <span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span>
+                ${bill.status === 'CANCELLED' ? 
+                    `<span class="cancelled-info">(Cancelled on ${new Date(bill.cancellationDate).toLocaleDateString()})</span>` 
+                    : ''}
+            </p>
+        </div>
+    `;
+
     const detailsHTML = `
         <div style="margin-top: 15px; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
-            <h3>Bill Details: ${bill.billNumber}</h3>
+            <h3>Bill Details: #${bill.billNumber}</h3>
             <p>Date: ${new Date(bill.date).toLocaleString()}</p>
+            ${statusInfo}
             ${customerInfo}
             ${staffInfo}
             <table style="width: 100%; margin-top: 10px;">
@@ -589,11 +615,32 @@ function showBillDetails(bill) {
                         <td style="text-align: center;"><b>₹${bill.gstAmount.toFixed(2)}</b></td>
                     </tr>
                     <tr>
+                        <td colspan="3" style="text-align: right;"><strong>Transport Charges:</strong></td>
+                        <td style="text-align: center;"><b>₹${(bill.transportCharges || 0).toFixed(2)}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;"><strong>Extra Charges:</strong></td>
+                        <td style="text-align: center;"><b>₹${(bill.extraCharges || 0).toFixed(2)}</b></td>
+                    </tr>
+                    <tr class="total-amount">
                         <td colspan="3" style="text-align: right;"><strong>Total Amount:</strong></td>
                         <td style="text-align: center;"><b>₹${bill.totalAmount.toFixed(2)}</b></td>
                     </tr>
                 </tfoot>
             </table>
+            
+            <!-- Additional Charges Details -->
+            ${(bill.transportCharges || bill.extraCharges) ? `
+                <div class="additional-charges-details" style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+                    <h4 style="margin-bottom: 10px;">Additional Charges Breakdown</h4>
+                    ${bill.transportCharges ? `
+                        <p><strong>Transport Charges:</strong> ₹${bill.transportCharges.toFixed(2)}</p>
+                    ` : ''}
+                    ${bill.extraCharges ? `
+                        <p><strong>Extra Charges:</strong> ₹${bill.extraCharges.toFixed(2)}</p>
+                    ` : ''}
+                </div>
+            ` : ''}
         </div>
     `;
 
@@ -627,26 +674,32 @@ function generateReport() {
         return billDate.toISOString().split('T')[0] === todayStr;
     });
 
-    // Calculate today's totals
+    // Calculate today's totals with new charges
     const todayTotals = todayBills.reduce((acc, bill) => ({
         billCount: acc.billCount + 1,
         totalAmount: acc.totalAmount + (bill.totalAmount || 0),
         subtotal: acc.subtotal + (bill.subtotal || 0),
-        gstAmount: acc.gstAmount + (bill.gstAmount || 0)
+        gstAmount: acc.gstAmount + (bill.gstAmount || 0),
+        transportCharges: acc.transportCharges + (bill.transportCharges || 0),
+        extraCharges: acc.extraCharges + (bill.extraCharges || 0)
     }), {
         billCount: 0,
         totalAmount: 0,
         subtotal: 0,
-        gstAmount: 0
+        gstAmount: 0,
+        transportCharges: 0,
+        extraCharges: 0
     });
 
-    // Display today's summary
+    // Display today's summary with new charges
     const todaySummaryDiv = document.getElementById('today-summary');
     todaySummaryDiv.innerHTML = `
         <h3>Today's Summary (${new Date().toLocaleDateString()})</h3>
         <p>Total Bills: ${todayTotals.billCount}</p>
         <p>Subtotal: ₹${todayTotals.subtotal.toFixed(2)}</p>
         <p>GST Amount: ₹${todayTotals.gstAmount.toFixed(2)}</p>
+        <p>Transport Charges: ₹${(todayTotals.transportCharges || 0).toFixed(2)}</p>
+        <p>Extra Charges: ₹${(todayTotals.extraCharges || 0).toFixed(2)}</p>
         <p>Total Sales Amount: ₹${todayTotals.totalAmount.toFixed(2)}</p>
     `;
 
@@ -687,13 +740,15 @@ function generateReport() {
     // Sort bills by date (newest first)
     filteredBills.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // Update table headers to include Bill ID
+    // Update table headers to include new columns
     const reportTable = document.getElementById('report-table');
     reportTable.querySelector('thead').innerHTML = `
         <tr>
             <th style="text-align: center;">Bill Number</th>
             <th style="text-align: center;">Subtotal</th>
             <th style="text-align: center;">GST Amount</th>
+            <th style="text-align: center;">Transport</th>
+            <th style="text-align: center;">Extra</th>
             <th style="text-align: center;">Total Amount</th>
             <th style="text-align: center;">Status</th>
             <th style="text-align: center;">Action</th>
@@ -703,7 +758,6 @@ function generateReport() {
     // Populate report table with individual bills
     filteredBills.forEach(bill => {
         const row = reportTableBody.insertRow();
-        const billDateTime = new Date(bill.date);
         const statusClass = bill.status === 'CANCELLED' ? 'cancelled-bill' : '';
         
         row.className = statusClass;
@@ -711,6 +765,8 @@ function generateReport() {
             <td style="text-align: center;"><b>${bill.billNumber}</b></td>
             <td style="text-align: center;">₹${bill.subtotal.toFixed(2)}</td>
             <td style="text-align: center;">₹${bill.gstAmount.toFixed(2)}</td>
+            <td style="text-align: center;">₹${(bill.transportCharges || 0).toFixed(2)}</td>
+            <td style="text-align: center;">₹${(bill.extraCharges || 0).toFixed(2)}</td>
             <td style="text-align: center;"><b>₹${bill.totalAmount.toFixed(2)}</b></td>
             <td style="text-align: center;"><span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span></td>
             <td style="text-align: center;">
@@ -728,8 +784,6 @@ function generateReport() {
             cells[i].onclick = () => showBillDetails(bill);
         }
     });
-
-    
 }
 
 // Initialize brands and products list on page load
