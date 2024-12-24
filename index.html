@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sri Vinayaga Traders - Product Management and Billing System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -127,16 +128,46 @@
                     </tbody>
                 </table>
             </div>
-
             <div class="bill-summary">
-                <div class="tax-calculation">
+                <div class="charges-form">
                     <div class="form-group">
-                        <label for="gst-percentage">GST %:</label>
-                        <input type="number" id="gst-percentage" placeholder="Enter GST %" value="0" min="0" max="100" step="0.01" onchange="updateBillTotals()">
+                        <label for="gst-percentage">GST %</label>
+                        <input type="number" 
+                               id="gst-percentage" 
+                               placeholder="Enter GST %" 
+                               value="0" 
+                               min="0" 
+                               max="100" 
+                               step="1" 
+                               onchange="updateBillTotals()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transport-charges">Transport Charges</label>
+                        <input type="number" 
+                               id="transport-charges" 
+                               placeholder="Enter Transport Charges" 
+                               value="0" 
+                               min="0" 
+                               step="50" 
+                               onchange="updateBillTotals()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="extra-charges">Extra Charges</label>
+                        <input type="number" 
+                               id="extra-charges" 
+                               placeholder="Enter Extra Charges" 
+                               value="0" 
+                               min="0" 
+                               step="10" 
+                               onchange="updateBillTotals()">
                     </div>
                 </div>
                 <p>Subtotal: ₹<span id="bill-subtotal">0.00</span></p>
                 <p>GST Amount: ₹<span id="gst-amount">0.00</span></p>
+                <p>Transport Charges: ₹<span id="transport-amount">0.00</span></p>
+                <p>Extra Charges: ₹<span id="extra-amount">0.00</span></p>
                 <p class="total-amount">Grand Total: ₹<span id="bill-total-amount">0.00</span></p>
                 <button class="btn btn-success" onclick="generateBill()">
                     <i class="icon">✓</i> Generate Bill
