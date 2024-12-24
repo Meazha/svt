@@ -272,7 +272,9 @@ function displayBills(bills) {
     container.innerHTML = '';
 
     if (bills.length === 0) {
-        container.innerHTML = '<p>No bills found.</p>';
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = '<td colspan="7" style="text-align: center;">No bills found.</td>';
+        container.appendChild(emptyRow);
         return;
     }
 
@@ -280,78 +282,126 @@ function displayBills(bills) {
     bills.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     bills.forEach(bill => {
-        const billElement = createBillElement(bill);
-        container.appendChild(billElement);
+        const rows = createBillElement(bill);
+        rows.forEach(row => container.appendChild(row));
     });
 }
 
 function createBillElement(bill) {
-    const billDiv = document.createElement('div');
-    billDiv.className = `bill-details ${bill.status === 'CANCELLED' ? 'cancelled-bill' : ''}`;
+    const rows = [];
+    const mainRow = document.createElement('tr');
+    const detailsRow = document.createElement('tr');
+    
+    mainRow.className = bill.status === 'CANCELLED' ? 'cancelled-row' : '';
+    mainRow.setAttribute('data-bill-id', bill.id);
+    detailsRow.className = 'bill-details-row';
 
-    const date = new Date(bill.date).toLocaleDateString();
-    const time = new Date(bill.date).toLocaleTimeString();
+    const date = new Date(bill.date);
+    const dateStr = date.toLocaleDateString();
+    const timeStr = date.toLocaleTimeString();
 
-    billDiv.innerHTML = `
-        <div class="bill-header">
-            <div>
-                <strong>Bill No: ${bill.billNumber || 'N/A'}</strong>
-                <br>
-                <strong>Date:</strong> ${date}
-                <strong>Time:</strong> ${time}
-                <br>
-                <strong>Customer:</strong> ${bill.customer?.name || 'N/A'}
-                <br>
-                <strong>Mobile:</strong> ${bill.customer?.mobile || 'N/A'}
-                <br>
-                <strong>Address:</strong> ${bill.customer?.address || 'N/A'}
-                <br>
-                <strong>Staff:</strong> ${bill.staff?.name || 'N/A'} (${bill.staff?.role || 'N/A'})
-                <br>
-                <span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span>
-                ${bill.status === 'CANCELLED' ? 
-                    `<br><span class="cancelled-date">Cancelled on ${new Date(bill.cancellationDate).toLocaleDateString()}</span>` : 
-                    ''
-                }
-            </div>
-            <div>
-                ${bill.status === 'ACTIVE' ? 
-                    `<button class="btn btn-danger" onclick="cancelBill(${bill.id})">Cancel Bill</button>` : 
-                    ''
-                }
-                <button class="expand-btn" onclick="toggleBillDetails(${bill.id})">Show ▼</button>
-            </div>
-        </div>
-        <div class="bill-totals">
-            <p><strong>Subtotal:</strong> ₹${bill.subtotal.toFixed(2)}</p>
-            <p><strong>GST (${bill.gstPercentage}%):</strong> ₹${bill.gstAmount.toFixed(2)}</p>
-            <p><strong>Total Amount:</strong> ₹${bill.totalAmount.toFixed(2)}</p>
-        </div>
-        <table class="bill-items-table" id="bill-items-${bill.id}">
-            <thead>
-                <tr>
-                    <th style="text-align: center;">Product</th>
-                    <th style="text-align: center;">Quantity (KG)</th>
-                    <th style="text-align: center;">Price/KG</th>
-                    <th style="text-align: center;">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${bill.items.map(item => `
-                    <tr>
-                        <td style="text-align: center;"><strong>${item.brandName || ''}</strong> - ${item.productName}</td>
-                        <td style="text-align: center;">${item.quantity}</td>
-                        <td style="text-align: center;">₹${item.price.toFixed(2)}</td>
-                        <td style="text-align: center;">₹${(item.quantity * item.price).toFixed(2)}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
+    mainRow.innerHTML = `
+        <td>${bill.billNumber || 'N/A'}</td>
+        <td>${dateStr}<br>${timeStr}</td>
+        <td>${bill.customer?.name || 'N/A'}</td>
+        <td>${bill.staff?.name || 'N/A'}</td>
+        <td>₹${bill.totalAmount.toFixed(2)}</td>
+        <td><span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span></td>
+        <td>
+            ${bill.status === 'ACTIVE' ? 
+                `<button class="btn btn-danger" onclick="cancelBill(${bill.id}); event.stopPropagation();">Cancel</button>` : 
+                ''}
+        </td>
     `;
 
-    return billDiv;
-}
+    detailsRow.innerHTML = `
+        <td colspan="7">
+            <div class="bill-details-content">
+                <div class="details-section">
+                    <div class="customer-details">
+                        <h4>Customer Details</h4>
+                        <p><strong>Name:</strong> ${bill.customer?.name || 'N/A'}</p>
+                        <p><strong>Mobile:</strong> ${bill.customer?.mobile || 'N/A'}</p>
+                        <p><strong>Address:</strong> ${bill.customer?.address || 'N/A'}</p>
+                    </div>
+                    
+                    <div class="staff-details">
+                        <h4>Staff Details</h4>
+                        <p><strong>Name:</strong> ${bill.staff?.name || 'N/A'}</p>
+                        <p><strong>Role:</strong> ${bill.staff?.role || 'N/A'}</p>
+                    </div>
+                    
+                    ${bill.status === 'CANCELLED' ? 
+                        `<div class="cancelled-info">
+                            <p><strong>Cancelled on:</strong> ${new Date(bill.cancellationDate).toLocaleDateString()}</p>
+                        </div>` : 
+                        ''
+                    }
+                </div>
 
+                <div class="products-section">
+                    <h4>Products</h4>
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Brand</th>
+                                <th>Product</th>
+                                <th>Quantity (KG)</th>
+                                <th>Price/KG</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${bill.items.map((item, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.brandName || 'N/A'}</td>
+                                    <td>${item.productName}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>₹${item.price.toFixed(2)}</td>
+                                    <td>₹${(item.quantity * item.price).toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bill-totals">
+                    <table class="totals-table">
+                        <tr>
+                            <td class="totals-label">Subtotal:</td>
+                            <td class="totals-value">₹${bill.subtotal.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td class="totals-label">GST (${bill.gstPercentage}%):</td>
+                            <td class="totals-value">₹${bill.gstAmount.toFixed(2)}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td class="totals-label">Total Amount:</td>
+                            <td class="totals-value">₹${bill.totalAmount.toFixed(2)}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </td>
+    `;
+
+    // Add click event to toggle details
+    mainRow.addEventListener('click', function() {
+        const currentlyOpen = document.querySelectorAll('.bill-details-row[style="display: table-row;"]');
+        currentlyOpen.forEach(row => {
+            if (row !== detailsRow) {
+                row.style.display = 'none';
+            }
+        });
+        
+        detailsRow.style.display = detailsRow.style.display === 'table-row' ? 'none' : 'table-row';
+    });
+
+    rows.push(mainRow, detailsRow);
+    return rows;
+}
 
 function cancelBill(billId) {
     if (!confirm('Are you sure you want to cancel this bill?')) {
