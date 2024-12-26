@@ -467,6 +467,61 @@ function removeFromBill(index) {
     updateBillItemsTable();
 }
 
+function formatBillDetailsForTelegram(bill) {
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString();
+    const formatTime = (dateStr) => new Date(dateStr).toLocaleTimeString();
+
+    let message = `🧾 *NEW BILL GENERATED*\n\n`;
+    message += `Bill No: *${bill.billNumber}*\n`;
+    message += `Date: ${formatDate(bill.date)}\n`;
+    message += `Time: ${formatTime(bill.date)}\n\n`;
+
+    // Customer Details
+    message += `*CUSTOMER DETAILS*\n`;
+    message += `Name: ${bill.customer.name}\n`;
+    message += `Mobile: ${bill.customer.mobile}\n`;
+    message += `Address: ${bill.customer.address}\n\n`;
+
+    // Staff Details
+    message += `*STAFF DETAILS*\n`;
+    message += `Name: ${bill.staff.name}\n`;
+    message += `Role: ${bill.staff.role}\n\n`;
+
+    // Items
+    message += `*ITEMS*\n`;
+    bill.items.forEach((item, index) => {
+        message += `${index + 1}. ${item.brandName} - ${item.productName}\n`;
+        message += `   Qty: ${item.quantity}KG x ₹${item.price}/KG = ₹${(item.quantity * item.price).toFixed(2)}\n`;
+    });
+
+    // Bill Summary
+    message += `\n*BILL SUMMARY*\n`;
+    message += `Subtotal: ₹${bill.subtotal.toFixed(2)}\n`;
+    message += `GST (${bill.gstPercentage}%): ₹${bill.gstAmount.toFixed(2)}\n`;
+    if (bill.transportCharges) message += `Transport: ₹${bill.transportCharges.toFixed(2)}\n`;
+    if (bill.extraCharges) message += `Extra Charges: ₹${bill.extraCharges.toFixed(2)}\n`;
+    message += `*TOTAL AMOUNT: ₹${bill.totalAmount.toFixed(2)}*`;
+
+    return encodeURIComponent(message);
+}
+
+// Function to send message to Telegram
+async function sendTelegramMessage(message) {
+    const botToken = '6330850455:AAEr7XSfLqodb1Pl3srqU_9yYnErANni9No';
+    const chatId = '-1001979192306';
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}&parse_mode=Markdown`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (!data.ok) {
+            console.error('Failed to send Telegram message:', data);
+        }
+    } catch (error) {
+        console.error('Error sending Telegram message:', error);
+    }
+}
+
 function generateBill() {
     if (currentBillItems.length === 0) {
         alert('Please add items to the bill');
@@ -519,6 +574,10 @@ function generateBill() {
     bills.push(bill);
     localStorage.setItem('bills', JSON.stringify(bills));
 
+    // Send bill details to Telegram
+    const telegramMessage = formatBillDetailsForTelegram(bill);
+    sendTelegramMessage(telegramMessage);
+
     // Clear form
     currentBillItems = [];
     document.getElementById('customer-name').value = '';
@@ -544,15 +603,23 @@ function cancelBill(billId) {
         bills[billIndex].status = 'CANCELLED';
         bills[billIndex].cancellationDate = new Date().toISOString();
         localStorage.setItem('bills', JSON.stringify(bills));
-        generateReport(); // Refresh the report table
+
+        const cancelMessage = `❌ *BILL CANCELLED*\n\n` +
+            `Bill No: *${bills[billIndex].billNumber}*\n` +
+            `Customer: ${bills[billIndex].customer.name}\n` +
+            `Amount: ₹${bills[billIndex].totalAmount.toFixed(2)}\n` +
+            `Cancelled on: ${new Date().toLocaleString()}`;
+
+        sendTelegramMessage(encodeURIComponent(cancelMessage));
+        generateReport();
     }
 }
 
 function generateProfessionalBillPDF(bill) {
     const template = `
-        <div id="bill-pdf-content" style="padding: 20px; font-family: 'Arial', sans-serif; width: 210mm; margin: auto;">
+        <div id="bill-pdf-content" style="padding: 5px; font-family: 'Arial', sans-serif; width: 210mm; margin: auto;">
             <!-- Header Section -->
-            <div style="text-align: center; margin-bottom: 30px;">
+            <div style="text-align: center; margin-bottom: 15px;">
                 <h1 style="font-size: 24px; margin: 0; font-weight: bold; color: #000;">SRI VINAYAGA TRADERS</h1>
                 <p style="margin: 5px 0; font-size: 14px;">123 Main Street, First Floor</p>
                 <p style="margin: 5px 0; font-size: 14px;">City Name, State - PIN Code</p>
