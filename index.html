@@ -40,7 +40,6 @@
                     <option value="">Select Brand</option>
                 </select>
                 <input type="text" id="product-name" placeholder="Product Name" required>
-                <input type="number" id="product-price" placeholder="Price per KG" step="0.01" required>
                 <button class="btn btn-primary" onclick="addProduct()">
                     <i class="icon">+</i> Add Product
                 </button>
@@ -53,7 +52,6 @@
                         <tr>
                             <th style="text-align: center;">Brand</th>
                             <th style="text-align: center;">Product</th>
-                            <th style="text-align: center;">Price/KG</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
@@ -105,8 +103,8 @@
                     </button>
                 </div>
             
-                <input type="number" id="billing-quantity" placeholder="Quantity (KG)" step="0.01" required>
-                <input type="number" id="billing-manual-price" placeholder="Price/KG" step="0.01" style="display: none;">
+                <input type="number" id="billing-quantity" placeholder="Quantity" required>
+                <input type="number" id="billing-manual-price" placeholder="Price per Unit" required>
                 <button class="btn btn-primary" onclick="addProductToBill()">
                     <i class="icon">+</i> Add to Bill
                 </button>
