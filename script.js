@@ -137,32 +137,24 @@ function addBrand() {
 function addProduct() {
     const brandSelect = document.getElementById('product-brand');
     const productName = document.getElementById('product-name').value.trim();
-    const productPrice = parseFloat(document.getElementById('product-price').value);
     const brandId = brandSelect.value;
 
-    if (!brandId || !productName || isNaN(productPrice) || productPrice <= 0) {
-        alert('Please fill all product details correctly.');
+    if (!brandId || !productName) {
+        alert('Please fill all product details');
         return;
     }
 
-    // Fetch existing products from localStorage
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const newProduct = {
         id: Date.now(),
         brandId: brandId,
-        name: productName,
-        price: productPrice
+        name: productName
     };
 
-    // Add the new product to the list
     products.push(newProduct);
     localStorage.setItem('products', JSON.stringify(products));
 
-    // Clear input fields
     document.getElementById('product-name').value = '';
-    document.getElementById('product-price').value = '';
-
-    // Reapply the filter for the selected brand
     filterProductsByBrand();
 }
 
@@ -196,7 +188,6 @@ function loadProductsList(filterBrandId = '') {
     
     tableBody.innerHTML = '';
 
-    // Filter products if a brand is selected
     const filteredProducts = filterBrandId 
         ? products.filter(product => product.brandId == filterBrandId)
         : products;
@@ -204,7 +195,7 @@ function loadProductsList(filterBrandId = '') {
     if (filteredProducts.length === 0) {
         const row = tableBody.insertRow();
         row.innerHTML = `
-            <td colspan="4" style="text-align: center;">
+            <td colspan="3" style="text-align: center;">
                 ${filterBrandId ? 'No products found for this brand' : 'No products available'}
             </td>
         `;
@@ -217,71 +208,13 @@ function loadProductsList(filterBrandId = '') {
         row.innerHTML = `
             <td style="text-align: center;">${brand ? brand.name : 'Unknown'}</td>
             <td style="text-align: center;">${product.name}</td>
-            <td style="text-align: center;">₹${product.price.toFixed(2)}</td>
             <td style="text-align: center;">
-                <button class="btn btn-primary" onclick="editProduct(${product.id})">
-                    <i class="icon">✎</i> Edit
-                </button>
                 <button class="btn btn-danger" onclick="deleteProduct(${product.id})">
                     <i class="icon">×</i> Delete
                 </button>
             </td>
         `;
     });
-}
-
-function editProduct(productId) {
-    const products = JSON.parse(localStorage.getItem('products'));
-    const product = products.find(p => p.id == productId);
-    
-    if (!product) return;
-
-    // Populate form fields with product data
-    document.getElementById('product-brand').value = product.brandId;
-    document.getElementById('product-name').value = product.name;
-    document.getElementById('product-price').value = product.price;
-    
-    // Change Add button to Update button
-    const addButton = document.querySelector('button[onclick="addProduct()"]');
-    addButton.innerHTML = '<i class="icon">✓</i> Update Product';
-    addButton.onclick = () => updateProduct(productId);
-}
-
-function updateProduct(productId) {
-    const brandId = document.getElementById('product-brand').value;
-    const productName = document.getElementById('product-name').value;
-    const productPrice = parseFloat(document.getElementById('product-price').value);
-
-    if (!brandId || !productName || !productPrice) {
-        alert('Please fill all product details');
-        return;
-    }
-
-    const products = JSON.parse(localStorage.getItem('products'));
-    const productIndex = products.findIndex(p => p.id == productId);
-    
-    if (productIndex === -1) return;
-
-    // Update product
-    products[productIndex] = {
-        ...products[productIndex],
-        brandId: brandId,
-        name: productName,
-        price: productPrice
-    };
-
-    localStorage.setItem('products', JSON.stringify(products));
-
-    // Reset form
-    document.getElementById('product-name').value = '';
-    document.getElementById('product-price').value = '';
-    
-    // Reset button to Add mode
-    const updateButton = document.querySelector('button[onclick*="updateProduct"]');
-    updateButton.innerHTML = '<i class="icon">+</i> Add Product';
-    updateButton.onclick = addProduct;
-
-    loadProductsList();
 }
 
 function deleteProduct(productId) {
@@ -292,7 +225,9 @@ function deleteProduct(productId) {
     const products = JSON.parse(localStorage.getItem('products'));
     const filteredProducts = products.filter(p => p.id != productId);
     localStorage.setItem('products', JSON.stringify(filteredProducts));
+
     loadProductsList();
+    filterProductsByBrand();
 }
 
 // Billing Section
@@ -340,11 +275,12 @@ function validateCustomerInfo() {
 let currentBillItems = [];
 
 function addProductToBill() {
-    let brandName, productName, productPrice;
+    let brandName, productName;
     const quantity = parseFloat(document.getElementById('billing-quantity').value);
+    const price = parseFloat(document.getElementById('billing-manual-price').value);
 
-    if (!quantity || quantity <= 0) {
-        alert('Please enter a valid quantity');
+    if (!quantity || quantity <= 0 || !price || price <= 0) {
+        alert('Please enter valid quantity and price');
         return;
     }
 
@@ -367,9 +303,8 @@ function addProductToBill() {
 
     if (isManualProduct) {
         productName = document.getElementById('billing-product-manual').value.trim();
-        productPrice = parseFloat(document.getElementById('billing-manual-price').value);
-        if (!productName || !productPrice || productPrice <= 0) {
-            alert('Please enter product name and valid price');
+        if (!productName) {
+            alert('Please enter product name');
             return;
         }
     } else {
@@ -381,7 +316,6 @@ function addProductToBill() {
         const products = JSON.parse(localStorage.getItem('products'));
         const product = products.find(p => p.id == productSelect.value);
         productName = product.name;
-        productPrice = product.price;
     }
 
     const billItem = {
@@ -389,7 +323,7 @@ function addProductToBill() {
         brandName: brandName,
         productName: productName,
         quantity: quantity,
-        price: productPrice,
+        price: price,
         tax: 0
     };
 
@@ -398,9 +332,9 @@ function addProductToBill() {
 
     // Clear inputs
     document.getElementById('billing-quantity').value = '';
+    document.getElementById('billing-manual-price').value = '';
     if (isManualProduct) {
         document.getElementById('billing-product-manual').value = '';
-        document.getElementById('billing-manual-price').value = '';
     }
     if (isManualBrand) {
         document.getElementById('billing-brand-manual').value = '';
@@ -871,25 +805,20 @@ function generateReport() {
     const reportType = document.getElementById('report-type').value;
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
-
     const bills = JSON.parse(localStorage.getItem('bills')) || [];
-    const reportTableBody = document.getElementById('report-table-body');
-    reportTableBody.innerHTML = '';
 
-    // Format today's date for comparison
+    // Today's summary calculations (only ACTIVE bills)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayStr = today.toISOString().split('T')[0];
 
-    // Filter today's bills
-    const todayBills = bills.filter(bill => {
+    const todayActiveBills = bills.filter(bill => {
         const billDate = new Date(bill.date);
         billDate.setHours(0, 0, 0, 0);
-        return billDate.toISOString().split('T')[0] === todayStr;
+        return billDate.toISOString().split('T')[0] === todayStr && bill.status === 'ACTIVE';
     });
 
-    // Calculate today's totals with new charges
-    const todayTotals = todayBills.reduce((acc, bill) => ({
+    const todayTotals = todayActiveBills.reduce((acc, bill) => ({
         billCount: acc.billCount + 1,
         totalAmount: acc.totalAmount + (bill.totalAmount || 0),
         subtotal: acc.subtotal + (bill.subtotal || 0),
@@ -897,19 +826,13 @@ function generateReport() {
         transportCharges: acc.transportCharges + (bill.transportCharges || 0),
         extraCharges: acc.extraCharges + (bill.extraCharges || 0)
     }), {
-        billCount: 0,
-        totalAmount: 0,
-        subtotal: 0,
-        gstAmount: 0,
-        transportCharges: 0,
-        extraCharges: 0
+        billCount: 0, totalAmount: 0, subtotal: 0, gstAmount: 0,
+        transportCharges: 0, extraCharges: 0
     });
 
-    // Display today's summary with new charges
-    const todaySummaryDiv = document.getElementById('today-summary');
-    todaySummaryDiv.innerHTML = `
+    document.getElementById('today-summary').innerHTML = `
         <h3>Today's Summary (${new Date().toLocaleDateString()})</h3>
-        <p>Total Bills: ${todayTotals.billCount}</p>
+        <p>Total Active Bills: ${todayTotals.billCount}</p>
         <p>Subtotal: ₹${todayTotals.subtotal.toFixed(2)}</p>
         <p>GST Amount: ₹${todayTotals.gstAmount.toFixed(2)}</p>
         <p>Transport Charges: ₹${(todayTotals.transportCharges || 0).toFixed(2)}</p>
@@ -917,23 +840,27 @@ function generateReport() {
         <p>Total Sales Amount: ₹${todayTotals.totalAmount.toFixed(2)}</p>
     `;
 
-    let filteredBills = [];
+    // Table display (all bills, including cancelled)
+    const reportTableBody = document.getElementById('report-table-body');
+    reportTableBody.innerHTML = '';
 
-    // Filter bills based on report type
+    let filteredBills = [];
     switch(reportType) {
         case 'daily':
-            filteredBills = todayBills;
+            filteredBills = bills.filter(bill => {
+                const billDate = new Date(bill.date);
+                billDate.setHours(0, 0, 0, 0);
+                return billDate.toISOString().split('T')[0] === todayStr;
+            });
             break;
         case 'weekly':
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            oneWeekAgo.setHours(0, 0, 0, 0);
             filteredBills = bills.filter(bill => new Date(bill.date) >= oneWeekAgo);
             break;
         case 'monthly':
             const oneMonthAgo = new Date();
             oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-            oneMonthAgo.setHours(0, 0, 0, 0);
             filteredBills = bills.filter(bill => new Date(bill.date) >= oneMonthAgo);
             break;
         case 'custom':
@@ -951,10 +878,8 @@ function generateReport() {
             filteredBills = bills;
     }
 
-    // Sort bills by date (newest first)
     filteredBills.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // Update table headers to include new columns
     const reportTable = document.getElementById('report-table');
     reportTable.querySelector('thead').innerHTML = `
         <tr>
@@ -969,7 +894,6 @@ function generateReport() {
         </tr>
     `;
 
-    // Populate report table with individual bills
     filteredBills.forEach(bill => {
         const row = reportTableBody.insertRow();
         const statusClass = bill.status === 'CANCELLED' ? 'cancelled-bill' : '';
@@ -984,20 +908,18 @@ function generateReport() {
             <td style="text-align: center;"><b>₹${bill.totalAmount.toFixed(2)}</b></td>
             <td style="text-align: center;"><span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span></td>
             <td style="text-align: center;">
-            ${bill.status === 'ACTIVE' ? 
-                `<button class="btn btn-danger" onclick="cancelBill(${bill.id})">Cancel</button>` : 
-                `<span class="cancelled-date">Cancelled on ${new Date(bill.cancellationDate).toLocaleDateString()}</span>`
-            }
-            <button class="btn btn-primary" onclick="generateProfessionalBillPDF(${JSON.stringify(bill).replace(/"/g, '&quot;')})">
-                <i class="icon">📄</i> Download Bill
-            </button>
-        </td>
+                ${bill.status === 'ACTIVE' ? 
+                    `<button class="btn btn-danger" onclick="cancelBill(${bill.id})">Cancel</button>` : 
+                    `<span class="cancelled-date">Cancelled on ${new Date(bill.cancellationDate).toLocaleDateString()}</span>`
+                }
+                <button class="btn btn-primary" onclick="generateProfessionalBillPDF(${JSON.stringify(bill).replace(/"/g, '&quot;')})">
+                    <i class="icon">📄</i> Download Bill
+                </button>
+            </td>
         `;
         
-        // Make row clickable to show bill details
-        row.style.cursor = 'pointer';
         const cells = row.getElementsByTagName('td');
-        for (let i = 0; i < cells.length - 1; i++) { // Exclude the action column
+        for (let i = 0; i < cells.length - 1; i++) {
             cells[i].onclick = () => showBillDetails(bill);
         }
     });
