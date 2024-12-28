@@ -1,9 +1,147 @@
 {
   "brands": [],
   "products": [],
-  "bills": [],
-  "staff": [],
-  "currentBillNumber": 5,
-  "timestamp": "2024-12-22T04:53:32.381Z",
+  "bills": [
+    {
+      "id": 1735383634847,
+      "billNumber": 1,
+      "date": "2024-12-28T11:00:34.848Z",
+      "customer": {
+        "name": "raaam",
+        "mobile": "7898868790",
+        "address": "kund"
+      },
+      "staff": {
+        "id": 1735383561853,
+        "name": "Ram",
+        "mobile": "9087970987",
+        "role": "Staff"
+      },
+      "items": [
+        {
+          "productId": "manual-1735383590836",
+          "brandName": "ARS",
+          "productName": "16mm",
+          "quantity": 500,
+          "price": 89,
+          "tax": 0,
+          "itemTotal": 44500
+        },
+        {
+          "productId": "manual-1735383609288",
+          "brandName": "jsw",
+          "productName": "20mm",
+          "quantity": 400,
+          "price": 85,
+          "tax": 0,
+          "itemTotal": 34000
+        },
+        {
+          "productId": "manual-1735383625442",
+          "brandName": "tata",
+          "productName": "gi sheets",
+          "quantity": 60,
+          "price": 320,
+          "tax": 0,
+          "itemTotal": 19200
+        }
+      ],
+      "subtotal": 97700,
+      "gstPercentage": 18,
+      "gstAmount": 17586,
+      "transportCharges": 4000,
+      "extraCharges": 200,
+      "totalAmount": 119486,
+      "status": "ACTIVE"
+    },
+    {
+      "id": 1735383831980,
+      "billNumber": 2,
+      "date": "2024-12-28T11:03:51.980Z",
+      "customer": {
+        "name": "hgiu",
+        "mobile": "8689687099",
+        "address": "hjguy"
+      },
+      "staff": {
+        "id": 1735383561853,
+        "name": "Ram",
+        "mobile": "9087970987",
+        "role": "Staff"
+      },
+      "items": [
+        {
+          "productId": "manual-1735383804472",
+          "brandName": "ars",
+          "productName": "16mm",
+          "quantity": 860,
+          "price": 49,
+          "tax": 0,
+          "itemTotal": 42140
+        },
+        {
+          "productId": "manual-1735383819602",
+          "brandName": "jsw",
+          "productName": "22mm",
+          "quantity": 500,
+          "price": 53,
+          "tax": 0,
+          "itemTotal": 26500
+        }
+      ],
+      "subtotal": 68640,
+      "gstPercentage": 0,
+      "gstAmount": 0,
+      "transportCharges": 2000,
+      "extraCharges": 0,
+      "totalAmount": 70640,
+      "status": "CANCELLED",
+      "cancellationDate": "2024-12-28T17:44:08.525Z"
+    },
+    {
+      "id": 1735408178815,
+      "billNumber": 3,
+      "date": "2024-12-28T17:49:38.816Z",
+      "customer": {
+        "name": "hh",
+        "mobile": "8978789678",
+        "address": "add"
+      },
+      "staff": {
+        "id": 1735383561853,
+        "name": "Ram",
+        "mobile": "9087970987",
+        "role": "Staff"
+      },
+      "items": [
+        {
+          "productId": "manual-1735408156096",
+          "brandName": "ars",
+          "productName": "18mm",
+          "quantity": 700,
+          "price": 64,
+          "tax": 0,
+          "itemTotal": 44800
+        }
+      ],
+      "subtotal": 44800,
+      "gstPercentage": 0,
+      "gstAmount": 0,
+      "transportCharges": 0,
+      "extraCharges": 0,
+      "totalAmount": 44800,
+      "status": "ACTIVE"
+    }
+  ],
+  "staff": [
+    {
+      "id": 1735383561853,
+      "name": "Ram",
+      "mobile": "9087970987",
+      "role": "Staff"
+    }
+  ],
+  "currentBillNumber": 4,
+  "timestamp": "2024-12-28T17:59:41.426Z",
   "version": "1.0"
 }
