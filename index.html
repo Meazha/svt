@@ -16,7 +16,7 @@
     <div class="container">
         <nav>
             <button onclick="showSection('products')">Products</button>
-            <button onclick="showSection('billing')">Billing</button>
+            <button onclick="showSection('billing')">Estimation</button>
             <button onclick="showSection('reports')">Reports</button>
             <button onclick="window.location.href='admin.html'">Admin</button>
         </nav>
@@ -64,10 +64,9 @@
 
         <!-- Billing Section Remains the Same -->
         <section id="billing-section" class="section" style="display:block;">
-            <h2>Billing</h2>
+            <h1 style="text-align: center; padding-bottom: 10px;">ESTIMATION</h1>
 
             <div class="form-group">
-                <label for="staff-select">Select Staff:</label>
                 <select id="staff-select" required>
                     <option value="">Select Staff</option>
                 </select>
@@ -143,7 +142,7 @@
                 <p>Extra Charges: ₹<span id="extra-amount">0.00</span></p>
                 <p class="total-amount">Grand Total: ₹<span id="bill-total-amount">0.00</span></p>
                 <button class="btn btn-success" onclick="generateBill()">
-                    <i class="icon">✓</i> Generate Bill
+                    <i class="icon">✓</i> Estimate
                 </button>
             </div>
         </section>
