@@ -77,12 +77,10 @@ function toggleBrandInput() {
 function toggleProductInput() {
     const selectElement = document.getElementById('billing-product');
     const manualInput = document.getElementById('billing-product-manual');
-    const manualPrice = document.getElementById('billing-manual-price');
     isManualProduct = !isManualProduct;
     
     selectElement.style.display = isManualProduct ? 'none' : 'block';
     manualInput.style.display = isManualProduct ? 'block' : 'none';
-    manualPrice.style.display = isManualProduct ? 'block' : 'none';
     
     // Clear values when switching
     selectElement.value = '';
