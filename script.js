@@ -884,10 +884,6 @@ function generateReport() {
     reportTable.querySelector('thead').innerHTML = `
         <tr>
             <th style="text-align: center;">Bill Number</th>
-            <th style="text-align: center;">Subtotal</th>
-            <th style="text-align: center;">GST Amount</th>
-            <th style="text-align: center;">Transport</th>
-            <th style="text-align: center;">Extra</th>
             <th style="text-align: center;">Total Amount</th>
             <th style="text-align: center;">Status</th>
             <th style="text-align: center;">Action</th>
@@ -901,10 +897,6 @@ function generateReport() {
         row.className = statusClass;
         row.innerHTML = `
             <td style="text-align: center;"><b>${bill.billNumber}</b></td>
-            <td style="text-align: center;">₹${bill.subtotal.toFixed(2)}</td>
-            <td style="text-align: center;">₹${bill.gstAmount.toFixed(2)}</td>
-            <td style="text-align: center;">₹${(bill.transportCharges || 0).toFixed(2)}</td>
-            <td style="text-align: center;">₹${(bill.extraCharges || 0).toFixed(2)}</td>
             <td style="text-align: center;"><b>₹${bill.totalAmount.toFixed(2)}</b></td>
             <td style="text-align: center;"><span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span></td>
             <td style="text-align: center;">
