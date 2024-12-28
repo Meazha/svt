@@ -488,8 +488,12 @@ function applyFilters() {
     displayBills(bills);
 }
 
-function backupData() {
+async function backupData() {
     try {
+        const botToken = '6330850455:AAEr7XSfLqodb1Pl3srqU_9yYnErANni9No';
+        const chatId = '-1001979192306';
+        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendDocument`;
+
         const backup = {
             brands: JSON.parse(localStorage.getItem('brands')) || [],
             products: JSON.parse(localStorage.getItem('products')) || [],
@@ -497,73 +501,69 @@ function backupData() {
             staff: JSON.parse(localStorage.getItem('staff')) || [],
             currentBillNumber: parseInt(localStorage.getItem('currentBillNumber')) || 1,
             timestamp: new Date().toISOString(),
-            version: '1.0'
+            version: '1.0',
         };
 
-        // Create a JSON string of the backup data
         const backupString = JSON.stringify(backup, null, 2);
+        const backupFile = new Blob([backupString], { type: 'application/json' });
 
-        // Create a downloadable JSON file
-        const blob = new Blob([backupString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
+        const formData = new FormData();
+        formData.append('chat_id', chatId);
+        formData.append('document', backupFile, `backup-${new Date().toISOString().split('T')[0]}.json`);
 
-        // Trigger the download
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        const response = await fetch(telegramApiUrl, {
+            method: 'POST',
+            body: formData,
+        });
 
-        alert('Backup created successfully!');
+        if (!response.ok) {
+            throw new Error(`Telegram API error: ${response.statusText}`);
+        }
+
+        alert('Backup sent to Telegram successfully!');
     } catch (error) {
-        console.error('Error creating backup:', error);
-        alert('Failed to create backup. Please try again.');
+        console.error('Error sending backup to Telegram:', error);
+        alert('Failed to send backup to Telegram. Please try again.');
     }
 }
 
 // Improved restore function
-function restoreData(event) {
-    const file = event.target.files[0];
-    if (!file) {
-        alert('No file selected.');
-        return;
-    }
+async function restoreData() {
+    const url = 'https://raw.githubusercontent.com/Meazha/svt/refs/heads/main/data.json';
 
-    if (file.type !== 'application/json') {
-        alert('Please select a valid JSON file.');
-        return;
-    }
+    try {
+        // Fetch the raw JSON text from the URL
+        const response = await fetch(url);
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        try {
-            const backup = JSON.parse(e.target.result);
-
-            // Validate the backup structure
-            if (!backup.version || !backup.timestamp || !backup.brands || !backup.products || !backup.bills || !backup.staff) {
-                throw new Error('Invalid backup file format.');
-            }
-
-            // Confirm restoration
-            if (confirm('This will replace all current data. Are you sure you want to proceed?')) {
-                localStorage.setItem('brands', JSON.stringify(backup.brands));
-                localStorage.setItem('products', JSON.stringify(backup.products));
-                localStorage.setItem('bills', JSON.stringify(backup.bills));
-                localStorage.setItem('staff', JSON.stringify(backup.staff));
-                localStorage.setItem('currentBillNumber', backup.currentBillNumber.toString());
-
-                alert('Data restored successfully! The page will now reload.');
-                window.location.reload();
-            }
-        } catch (error) {
-            console.error('Error restoring data:', error);
-            alert('Failed to restore data. Please ensure the backup file is valid.');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch the file. HTTP status: ${response.status}`);
         }
-    };
 
-    reader.readAsText(file);
+        const rawText = await response.text(); // Get the raw text content of the file
+
+        // Parse the raw text into JSON
+        const backup = JSON.parse(rawText);
+
+        // Validate the backup structure
+        if (!backup.version || !backup.timestamp || !backup.brands || !backup.products || !backup.bills || !backup.staff) {
+            throw new Error('Invalid backup file format.');
+        }
+
+        // Confirm restoration
+        if (confirm('This will replace all current data. Are you sure you want to proceed?')) {
+            localStorage.setItem('brands', JSON.stringify(backup.brands));
+            localStorage.setItem('products', JSON.stringify(backup.products));
+            localStorage.setItem('bills', JSON.stringify(backup.bills));
+            localStorage.setItem('staff', JSON.stringify(backup.staff));
+            localStorage.setItem('currentBillNumber', backup.currentBillNumber.toString());
+
+            alert('Data restored successfully! The page will now reload.');
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error('Error restoring data:', error);
+        alert('Failed to restore data. Please ensure the backup file is valid and accessible.');
+    }
 }
 
 // Improved clear data function
