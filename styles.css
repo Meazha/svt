@@ -23,7 +23,7 @@ header {
 
 header h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 33px;
     letter-spacing: 1px;
 }
 
@@ -479,75 +479,5 @@ button:active {
     .charges-form .form-group input {
         height: 44px;
         font-size: 16px;
-    }
-}
-
-.input-group-sec {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-}
-
-.input-group-sec select,
-.input-group-sec input {
-    flex: 1;
-    min-width: 0; 
-    font-size: 12px;
-    padding: 8px 4px;
-}
-
-.form-group-sec {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 5px;
-    margin-bottom: 15px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch; 
-    padding-bottom: 5px; 
-}
-
-.form-group-sec input,
-.form-group-sec select,
-.form-group-sec button {
-    min-width: 0;
-    font-size: 12px;
-    padding: 8px 4px;
-}
-
-.btn-secondary-sec {
-    padding: 4px 8px;
-    font-size: 12px;
-    min-width: 30px;
-}
-
-@media screen and (max-width: 768px) {
-    .input-group-sec {
-        flex-direction: row; 
-    }
-    
-    .input-group-sec select,
-    .input-group-sec input,
-    .input-group-sec button {
-        width: auto;
-    }
-
-    #billing-quantity,
-    #billing-manual-price {
-        max-width: 80px;
-    }
-
-    .btn-primary-sec {
-        white-space: nowrap;
-        padding: 8px;
-    }
-
-    .btn-primary-sec .icon {
-        margin-right: 0;
-    }
-
-    .btn-primary-sec span {
-        display: none;
     }
 }
