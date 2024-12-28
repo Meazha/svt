@@ -512,6 +512,9 @@ function generateBill() {
     const telegramMessage = formatBillDetailsForTelegram(bill);
     sendTelegramMessage(telegramMessage);
 
+    alert(`Bill #${billNumber} Generated Successfully!`);
+    generateProfessionalBillPDF(bill);
+
     // Clear form
     currentBillItems = [];
     document.getElementById('customer-name').value = '';
@@ -523,9 +526,6 @@ function generateBill() {
     document.getElementById('gst-percentage').value = '';
 
     updateBillItemsTable();
-    alert(`Bill #${billNumber} Generated Successfully!`);
-
-    generateProfessionalBillPDF(bill);
 }
 
 function cancelBill(billId) {
