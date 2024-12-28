@@ -300,8 +300,6 @@ function createBillElement(bill) {
 
     mainRow.innerHTML = `
         <td>${bill.billNumber || 'N/A'}</td>
-        <td>${dateStr}<br>${timeStr}</td>
-        <td>${bill.customer?.name || 'N/A'}</td>
         <td>${bill.staff?.name || 'N/A'}</td>
         <td>₹${bill.totalAmount.toFixed(2)}</td>
         <td><span class="status-badge ${bill.status.toLowerCase()}">${bill.status}</span></td>
