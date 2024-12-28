@@ -518,11 +518,14 @@ function generateBill() {
     document.getElementById('customer-mobile').value = '';
     document.getElementById('customer-address').value = '';
     document.getElementById('staff-select').value = '';
-    document.getElementById('transport-charges').value = '0';
-    document.getElementById('extra-charges').value = '0';
-    document.getElementById('gst-percentage').value = '0';
+    document.getElementById('transport-charges').value = '';
+    document.getElementById('extra-charges').value = '';
+    document.getElementById('gst-percentage').value = '';
+
     updateBillItemsTable();
     alert(`Bill #${billNumber} Generated Successfully!`);
+
+    generateProfessionalBillPDF(bill);
 }
 
 function cancelBill(billId) {
