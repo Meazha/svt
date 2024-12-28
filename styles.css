@@ -156,13 +156,22 @@ nav button:hover {
 
 .form-group {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap; 
+    gap: 5px;
     margin-bottom: 15px;
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; 
+    padding-bottom: 5px; 
 }
 
-.form-group input, 
+.form-group input,
 .form-group select,
+.form-group button {
+    min-width: 0;
+    font-size: 12px;
+    padding: 8px 4px;
+}
+
 .report-filters input,
 .report-filters select {
     flex: 1;
@@ -367,24 +376,29 @@ button:active {
 
 .input-group {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     align-items: center;
     flex: 1;
+    min-width: 0;
 }
 
 .input-group select,
 .input-group input {
     flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    padding: 8px 4px;
 }
 
 .btn-secondary {
     background-color: #6c757d;
     color: white;
-    padding: 8px 12px;
+    padding: 4px 8px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
+    min-width: 30px;
 }
 
 .btn-secondary:hover {
@@ -393,13 +407,31 @@ button:active {
 
 @media screen and (max-width: 768px) {
     .input-group {
-        flex-direction: column;
+        flex-direction: row; /* Keep direction as row */
     }
     
     .input-group select,
     .input-group input,
     .input-group button {
-        width: 100%;
+        width: auto; /* Let flex handle the width */
+    }
+
+    #billing-quantity,
+    #billing-manual-price {
+        max-width: 80px; /* Limit width of number inputs */
+    }
+
+    .btn-primary {
+        white-space: nowrap;
+        padding: 8px;
+    }
+
+    .btn-primary .icon {
+        margin-right: 0;
+    }
+
+    .btn-primary span {
+        display: none; /* Hide "Add to Bill" text on mobile, keep only the + icon */
     }
 }
 
