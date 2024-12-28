@@ -81,30 +81,30 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                <div class="input-group">
+            <div class="form-group-sec">
+                <div class="input-group-sec">
                     <select id="billing-brand" onchange="updateProductList()">
                         <option value="">Select Brand</option>
                     </select>
                     <input type="text" id="billing-brand-manual" placeholder="Brand" style="display: none;">
-                    <button class="btn btn-secondary" id="toggle-brand-input" onclick="toggleBrandInput()">
+                    <button class="btn btn-secondary-sec" id="toggle-brand-input" onclick="toggleBrandInput()">
                         <i class="icon">✎</i>
                     </button>
                 </div>
             
-                <div class="input-group">
+                <div class="input-group-sec">
                     <select id="billing-product" onchange="updateProductPrice()">
                         <option value="">Select Product</option>
                     </select>
                     <input type="text" id="billing-product-manual" placeholder="Product" style="display: none;">
-                    <button class="btn btn-secondary" id="toggle-product-input" onclick="toggleProductInput()">
+                    <button class="btn btn-secondary-sec" id="toggle-product-input" onclick="toggleProductInput()">
                         <i class="icon">✎</i>
                     </button>
                 </div>
             
                 <input type="number" id="billing-quantity" placeholder="Quantity" required>
                 <input type="number" id="billing-manual-price" placeholder="Price per Unit" required>
-                <button class="btn btn-primary" onclick="addProductToBill()">
+                <button class="btn btn-primary-sec" onclick="addProductToBill()">
                     <i class="icon">+</i> Add to Bill
                 </button>
             </div>
