@@ -550,9 +550,9 @@ function cancelBill(billId) {
 
 function generateProfessionalBillPDF(bill) {
     const template = `
-        <div id="bill-pdf-content" style="padding: 5px; font-family: 'Arial', sans-serif; width: 210mm; margin: auto;">
+        <div id="bill-pdf-content" style="padding: 20px; font-family: 'Arial', sans-serif; width: 210mm; margin: auto;">
             <!-- Header Section -->
-            <div style="text-align: center; margin-bottom: 15px;">
+            <div style="text-align: center; margin-bottom: 30px;">
                 <h1 style="font-size: 24px; margin: 0; font-weight: bold; color: #000;">SRI VINAYAGA TRADERS</h1>
                 <p style="margin: 5px 0; font-size: 14px;">123 Main Street, First Floor</p>
                 <p style="margin: 5px 0; font-size: 14px;">City Name, State - PIN Code</p>
@@ -675,11 +675,11 @@ function generateProfessionalBillPDF(bill) {
     // PDF options
     const opt = {
         filename: `Bill-${bill.billNumber}.pdf`,
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-            scale: 1,
+            scale: 2,
             useCORS: true,
-            letterRendering: false
+            letterRendering: true
         },
         jsPDF: { 
             unit: 'mm', 
