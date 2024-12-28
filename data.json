@@ -2,8 +2,8 @@
   "brands": [],
   "products": [],
   "bills": [],
-  "currentBillNumber": 1,
   "staff": [],
+  "currentBillNumber": 5,
   "timestamp": "2024-12-22T04:53:32.381Z",
   "version": "1.0"
 }
