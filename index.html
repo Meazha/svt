@@ -23,7 +23,7 @@
 
         <!-- Products Section -->
         <section id="products-section" class="section">
-            <h2>Products Management</h2>
+            <h1 style="text-align: center; padding-bottom: 10px;">PRODUCTS MANAGEMENT</h1>
             
             <!-- Brand Management -->
             <div class="form-group">
@@ -81,30 +81,33 @@
                 </div>
             </div>
             
-            <div class="form-group-sec">
-                <div class="input-group-sec">
+            <div class="form-group">
+                <div class="input-group">
                     <select id="billing-brand" onchange="updateProductList()">
                         <option value="">Select Brand</option>
                     </select>
                     <input type="text" id="billing-brand-manual" placeholder="Brand" style="display: none;">
-                    <button class="btn btn-secondary-sec" id="toggle-brand-input" onclick="toggleBrandInput()">
+                    <button class="btn btn-secondary" id="toggle-brand-input" onclick="toggleBrandInput()">
                         <i class="icon">✎</i>
                     </button>
                 </div>
             
-                <div class="input-group-sec">
+                <div class="input-group">
                     <select id="billing-product" onchange="updateProductPrice()">
                         <option value="">Select Product</option>
                     </select>
                     <input type="text" id="billing-product-manual" placeholder="Product" style="display: none;">
-                    <button class="btn btn-secondary-sec" id="toggle-product-input" onclick="toggleProductInput()">
+                    <button class="btn btn-secondary" id="toggle-product-input" onclick="toggleProductInput()">
                         <i class="icon">✎</i>
                     </button>
                 </div>
-            
+            </div>
+
+            <div class="form-group">
                 <input type="number" id="billing-quantity" placeholder="Quantity" required>
-                <input type="number" id="billing-manual-price" placeholder="Price per Unit" required>
-                <button class="btn btn-primary-sec" onclick="addProductToBill()">
+                <input type="number" id="billing-units" placeholder="Units" required>
+                <input type="number" id="billing-manual-price" placeholder="Price per kg/Unit" required>
+                <button class="btn btn-primary" onclick="addProductToBill()">
                     <i class="icon">+</i> Add to Bill
                 </button>
             </div>
@@ -149,7 +152,7 @@
 
         <!-- Reports Section -->
         <section id="reports-section" class="section" style="display:none;">
-            <h2>Reports</h2>
+            <h1 style="text-align: center; padding-bottom: 10px;">REPORTS</h1>
             
             <div id="today-summary" class="today-summary">
                 <!-- Today's summary will be dynamically populated -->
