@@ -1,0 +1,194 @@
+{
+  "brands": [
+    {
+      "id": 1734683881446,
+      "name": "iSteel",
+      "description": ""
+    },
+    {
+      "id": 1734683937325,
+      "name": "Thirumala",
+      "description": ""
+    },
+    {
+      "id": 1734688611216,
+      "name": "BlueGold",
+      "description": ""
+    }
+  ],
+  "products": [
+    {
+      "id": 1734683888713,
+      "brandId": "1734683881446",
+      "name": "16mm",
+      "price": 35,
+      "tax": 0
+    },
+    {
+      "id": 1734683896307,
+      "brandId": "1734683881446",
+      "name": "20mm",
+      "price": 36.5,
+      "tax": 0
+    },
+    {
+      "id": 1734683902818,
+      "brandId": "1734683881446",
+      "name": "22mm",
+      "price": 39,
+      "tax": 0
+    },
+    {
+      "id": 1734683907691,
+      "brandId": "1734683881446",
+      "name": "32mm",
+      "price": 46,
+      "tax": 0
+    },
+    {
+      "id": 1734683952599,
+      "brandId": "1734683937325",
+      "name": "20mm",
+      "price": 41,
+      "tax": 0
+    },
+    {
+      "id": 1734684093312,
+      "brandId": "1734683937325",
+      "name": "32mm",
+      "price": 53,
+      "tax": 0
+    },
+    {
+      "id": 1734688626518,
+      "brandId": "1734688611216",
+      "name": "20mm",
+      "price": 46,
+      "tax": 0
+    },
+    {
+      "id": 1734688659650,
+      "brandId": "1734688611216",
+      "name": "32mm",
+      "price": 57,
+      "tax": 0
+    }
+  ],
+  "bills": [
+    {
+      "id": 1734684027805,
+      "billNumber": 1,
+      "date": "2024-12-20T08:40:27.805Z",
+      "items": [
+        {
+          "productId": "1734683896307",
+          "brandName": "iSteel",
+          "productName": "20mm",
+          "quantity": 350,
+          "price": 37,
+          "tax": 0,
+          "itemTotal": 12950
+        },
+        {
+          "productId": "1734683952599",
+          "brandName": "Thirumala",
+          "productName": "20mm",
+          "quantity": 300,
+          "price": 41,
+          "tax": 0,
+          "itemTotal": 12300
+        }
+      ],
+      "subtotal": 25250,
+      "gstPercentage": 18,
+      "gstAmount": 4545,
+      "totalAmount": 29795,
+      "status": "CANCELLED",
+      "cancellationDate": "2024-12-20T08:41:55.197Z"
+    },
+    {
+      "id": 1734684728555,
+      "billNumber": 2,
+      "date": "2024-12-20T08:52:08.555Z",
+      "items": [
+        {
+          "productId": "1734684093312",
+          "brandName": "Thirumala",
+          "productName": "32mm",
+          "quantity": 290,
+          "price": 53,
+          "tax": 0,
+          "itemTotal": 15370
+        },
+        {
+          "productId": "1734683896307",
+          "brandName": "iSteel",
+          "productName": "20mm",
+          "quantity": 450,
+          "price": 37,
+          "tax": 0,
+          "itemTotal": 16650
+        }
+      ],
+      "subtotal": 32020,
+      "gstPercentage": 18,
+      "gstAmount": 5763.599999999999,
+      "totalAmount": 37783.6,
+      "status": "ACTIVE"
+    },
+    {
+      "id": 1734687033939,
+      "billNumber": 3,
+      "date": "2024-12-20T09:30:33.939Z",
+      "items": [
+        {
+          "productId": "1734683888713",
+          "brandName": "iSteel",
+          "productName": "16mm",
+          "quantity": 600,
+          "price": 35,
+          "tax": 0,
+          "itemTotal": 21000
+        }
+      ],
+      "subtotal": 21000,
+      "gstPercentage": 18,
+      "gstAmount": 3780,
+      "totalAmount": 24780,
+      "status": "ACTIVE"
+    },
+    {
+      "id": 1734688794529,
+      "billNumber": 4,
+      "date": "2024-12-20T09:59:54.529Z",
+      "items": [
+        {
+          "productId": "1734684093312",
+          "brandName": "Thirumala",
+          "productName": "32mm",
+          "quantity": 500,
+          "price": 53,
+          "tax": 0,
+          "itemTotal": 26500
+        },
+        {
+          "productId": "1734683896307",
+          "brandName": "iSteel",
+          "productName": "20mm",
+          "quantity": 240,
+          "price": 37,
+          "tax": 0,
+          "itemTotal": 8880
+        }
+      ],
+      "subtotal": 35380,
+      "gstPercentage": 10,
+      "gstAmount": 3538,
+      "totalAmount": 38918,
+      "status": "ACTIVE"
+    }
+  ],
+  "currentBillNumber": 5,
+  "timestamp": "2024-12-20T13:14:15.074Z",
+  "version": "1.0"
+}
